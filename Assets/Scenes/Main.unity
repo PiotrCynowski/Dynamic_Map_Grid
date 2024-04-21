@@ -161,7 +161,10 @@ MonoBehaviour:
   - {fileID: 2800000, guid: 2569abe52e193d443a4d1c0f440d589c, type: 3}
   - {fileID: 2800000, guid: 7e45fdbacb0f57646840e491116427dd, type: 3}
   - {fileID: 2800000, guid: 30ecd0d9dfd9a534ca07eca9d7593a0b, type: 3}
-  mapElements: []
+  mapElements:
+  - {fileID: 5876282692966788824, guid: 357c6a5069ed8f141b883a35bf0f7b56, type: 3}
+  - {fileID: 5469541328822006628, guid: ed6bf9cb4c08c454faefce1b82114a47, type: 3}
+  - {fileID: 1379675368666560279, guid: 2a94fe6c7a4b6044b9f03d9ee164651f, type: 3}
 --- !u!4 &258982001
 Transform:
   m_ObjectHideFlags: 0

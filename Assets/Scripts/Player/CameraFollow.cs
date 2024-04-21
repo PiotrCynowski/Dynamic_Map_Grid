@@ -5,9 +5,9 @@ namespace Player.Camera {
         [SerializeField] Transform target;
         [SerializeField] float smoothSpeed;
         [SerializeField] Vector3 offset;
-        Vector3 desiredPosition, smoothedPosition;
-
         [SerializeField] bool keepTarget = true;
+
+        Vector3 desiredPosition, smoothedPosition;
 
         void LateUpdate() {
             if (keepTarget == true) {
