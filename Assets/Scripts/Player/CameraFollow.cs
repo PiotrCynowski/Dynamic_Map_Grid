@@ -9,7 +9,7 @@ namespace Player.Camera {
 
         [SerializeField] bool keepTarget = true;
 
-        void FixedUpdate() {
+        void LateUpdate() {
             if (keepTarget == true) {
                 desiredPosition = target.position + offset;
                 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);

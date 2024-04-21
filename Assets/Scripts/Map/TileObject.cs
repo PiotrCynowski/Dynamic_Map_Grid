@@ -21,6 +21,7 @@ namespace GameMap.Generator {
             axisTilesNumber = (tFromPlayer * 2) + 1;
             tilesFromCorner = tFromPlayer * 2;
             thisTileElements.Init(worldPos == Vector2Int.zero);
+            mat.SetTexture("_MainTex", MapDataManager.Instance.GetRndGround());
         }
 
         #region moving tiles

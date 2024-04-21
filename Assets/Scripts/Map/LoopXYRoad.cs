@@ -30,7 +30,8 @@ namespace GameMap.Generator {
             for (int row = -tilesNumberFromPlayer; row <= tilesNumberFromPlayer; row++) {
                 for (int col = -tilesNumberFromPlayer; col <= tilesNumberFromPlayer; col++) {
                     tile = Instantiate(Tiles, new Vector3(row * tileSize, 0, col * tileSize), Quaternion.identity, gameObject.transform);
-                    thisMat = tile.GetComponentInChildren<MeshRenderer>().material = new(mat);    
+                    thisMat = tile.GetComponentInChildren<MeshRenderer>().material = new(mat);
+                    thisMat.SetTexture("_MainTex", MapDataManager.Instance.GetRndGround());
                     tile.GetComponent<TileObject>().Init(new Vector2Int(row , col), ID, tileSize, tilesNumberFromPlayer, PlayerStandsOnTile, thisMat, null);
                     tileDatas.Add(tile.GetComponent<TileObject>());           
                     ID++;

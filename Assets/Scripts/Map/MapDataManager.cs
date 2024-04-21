@@ -1,10 +1,13 @@
 using PoolSpawner;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameMap.Generator {
     public class MapDataManager : MonoBehaviour {
         public static MapDataManager Instance;
+        [Header("Pool Elements")]
+        [SerializeField] Texture2D[] groundTextures;
+        int groundTexLen;
+
         [Header("Pool Elements")]
         [SerializeField] GameObject[] mapElements;
         public SpawnWithPool poolMapElements { get; private set; }
@@ -20,8 +23,6 @@ namespace GameMap.Generator {
             }
         }
 
-        public List<TileObject> currentTiles;
-
         void Awake() {
             if (Instance != null && Instance != this) {
                 Destroy(this.gameObject);
@@ -31,6 +32,7 @@ namespace GameMap.Generator {
             }
 
             AddObjectPool();
+            groundTexLen = groundTextures.Length;
         }
 
         void AddObjectPool() {
@@ -39,5 +41,11 @@ namespace GameMap.Generator {
                 poolMapElements.AddPoolForGameObject(mapElements[i], i);
             }
         }
+
+        #region Get Map Elements
+        public Texture2D GetRndGround() {
+            return groundTextures[Random.Range(0, groundTexLen)];
+        }
+        #endregion
     }
 }
