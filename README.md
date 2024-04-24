@@ -4,8 +4,16 @@ Project was created using Unity Engine.
 
 *map generation*
 
-![me](https://github.com/PiotrCynowski/grid_map/blob/master/pic/map_generation.gif)
+![me](https://github.com/PiotrCynowski/Dynamic_Map_Grid/blob/master/pic/map_generation.gif)
 
+
+*Map data example*
+
+![alt text](https://github.com/PiotrCynowski/Dynamic_Map_Grid/blob/master/pic/MapData.png?raw=true)
+
+*Setup for map generation example*
+
+![alt text](https://github.com/PiotrCynowski/Dynamic_Map_Grid/blob/master/pic/LoopXYRoad.png?raw=true)
 
 #### CONTROLS
 W, A, S, D: Move your character.
