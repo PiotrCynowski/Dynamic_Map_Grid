@@ -6,14 +6,14 @@ namespace GameMap.Generator {
     public class LoopXYRoad : MonoBehaviour {
         [SerializeField] TileObject Tiles;
         [SerializeField] float tileSize;
-        [SerializeField] int tilesNumberFromPlayer;
+        [SerializeField] int tilesNumberDistanceFromPlayer;
 
         List<TileObject> tileDatas;
         Vector2Int playerTileGPos, playerTileWorldPos, movedBy, lastGPos;
         bool isInPlayerRange;
 
         IEnumerator Start() {
-            playerTileGPos = new Vector2Int(tilesNumberFromPlayer, tilesNumberFromPlayer);
+            playerTileGPos = new Vector2Int(tilesNumberDistanceFromPlayer, tilesNumberDistanceFromPlayer);
             playerTileWorldPos = Vector2Int.zero;
             GenerateTilesPositionsAroundPlayer();
             yield return null;
@@ -30,12 +30,12 @@ namespace GameMap.Generator {
             tileDatas = new();
             int ID = 0;
 
-            for (int row = -tilesNumberFromPlayer; row <= tilesNumberFromPlayer; row++) {
-                for (int col = -tilesNumberFromPlayer; col <= tilesNumberFromPlayer; col++) {
+            for (int row = -tilesNumberDistanceFromPlayer; row <= tilesNumberDistanceFromPlayer; row++) {
+                for (int col = -tilesNumberDistanceFromPlayer; col <= tilesNumberDistanceFromPlayer; col++) {
                     tile = Instantiate(Tiles.gameObject, new Vector3(row * tileSize, 0, col * tileSize), Quaternion.identity, gameObject.transform);
                     thisMat = tile.GetComponentInChildren<MeshRenderer>().material = new(mat);
                     thisMat.SetTexture("_MainTex", MapDataManager.Instance.GetRndGround());
-                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), ID, tileSize, tilesNumberFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, null);
+                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), ID, tileSize, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, null);
                     tileDatas.Add(tile.GetComponent<TileObject>());
                     ID++;
                 }
@@ -51,8 +51,8 @@ namespace GameMap.Generator {
 
             for (int i = 0; i < tileDatas.Count; i++) {
 
-                isInPlayerRange = Mathf.Abs(tileDatas[i].localPos.x - gPos.x) <= tilesNumberFromPlayer
-                           && Mathf.Abs(tileDatas[i].localPos.y - gPos.y) <= tilesNumberFromPlayer;
+                isInPlayerRange = Mathf.Abs(tileDatas[i].localPos.x - gPos.x) <= tilesNumberDistanceFromPlayer
+                           && Mathf.Abs(tileDatas[i].localPos.y - gPos.y) <= tilesNumberDistanceFromPlayer;
 
                 tileDatas[i].MoveTiles(movedBy, playerTileWorldPos, isInPlayerRange);
             }
