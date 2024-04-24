@@ -427,8 +427,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 000e8e3b36da12048ae6f36d343b6c5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tiles: {fileID: 1145969422364769364, guid: 8a0741f6bcf44fb4a9cc96c2dcf3acc4, type: 3}
-  tileSize: 10
+  Tiles: {fileID: 2193625449732693592, guid: 8a0741f6bcf44fb4a9cc96c2dcf3acc4, type: 3}
+  tileSize: 15
   tilesNumberFromPlayer: 2
 --- !u!1 &2035223199
 GameObject:

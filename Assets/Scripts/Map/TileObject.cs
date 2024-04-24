@@ -3,15 +3,16 @@ using UnityEngine;
 
 namespace GameMap.Generator {
     public class TileObject : MonoBehaviour {
+        [SerializeField] TileElements thisTileElements;
+
         Action<Vector2Int> PlayerIsOnTile = delegate { };
         public Vector2Int localPos, worldPos;
         public int id;
         Vector2Int playerLocalPos;
         float tileSize;
         int axisTilesNumber, tilesFromCorner;
-        [SerializeField] TileElements thisTileElements;
-
-        public void Init(Vector2Int wPos, int _id, float _tileSize, int tFromPlayer, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos) {
+       
+        public void Init(Vector2Int wPos, int _id, float _tileSize, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos) {
             PlayerIsOnTile = playerColCallback;              
             localPos = _localPos.HasValue ? _localPos.Value : new Vector2Int(wPos.x + tFromPlayer, wPos.y + tFromPlayer);
             worldPos = wPos;
@@ -22,6 +23,7 @@ namespace GameMap.Generator {
             tilesFromCorner = tFromPlayer * 2;
             thisTileElements.Init(worldPos == Vector2Int.zero);
             mat.SetTexture("_MainTex", MapDataManager.Instance.GetRndGround());
+            GetComponentInChildren<MeshFilter>().mesh = tileMesh;
         }
 
         #region moving tiles
