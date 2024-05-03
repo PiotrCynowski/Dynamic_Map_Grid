@@ -4,12 +4,17 @@ using UnityEngine;
 
 namespace GameMap.Generator {
     public class LoopXYRoad : MonoBehaviour {
+        [Header("Tiles")]
         [SerializeField] TileObject Tiles;
         [SerializeField] float tileSize;
         [SerializeField] int tilesNumberDistanceFromPlayer;
 
+        [Header("Tile elements")]
+        [SerializeField] int elementsSpacing = 3;
+        [SerializeField] int maxElementsDensity = 50;
+
         List<TileObject> tileDatas;
-        Vector2Int playerTileGPos, playerTileWorldPos, movedBy, lastGPos;
+        Vector2Int playerTileGPos, playerTileWorldPos, movedBy; //lastGPos;
         bool isInPlayerRange;
 
         IEnumerator Start() {
@@ -35,7 +40,7 @@ namespace GameMap.Generator {
                     tile = Instantiate(Tiles.gameObject, new Vector3(row * tileSize, 0, col * tileSize), Quaternion.identity, gameObject.transform);
                     thisMat = tile.GetComponentInChildren<MeshRenderer>().material = new(mat);
                     thisMat.SetTexture("_MainTex", MapDataManager.Instance.GetRndGround());
-                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), ID, tileSize, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, null);
+                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), ID, tileSize, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, null, elementsSpacing, maxElementsDensity);
                     tileDatas.Add(tile.GetComponent<TileObject>());
                     ID++;
                 }
@@ -43,7 +48,7 @@ namespace GameMap.Generator {
         }
 
         void PlayerStandsOnTile(Vector2Int gPos) {
-            lastGPos = gPos;
+            //lastGPos = gPos;
 
             movedBy = new Vector2Int(gPos.x - playerTileGPos.x, gPos.y - playerTileGPos.y);
             playerTileWorldPos += movedBy;

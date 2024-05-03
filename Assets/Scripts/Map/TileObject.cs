@@ -3,7 +3,8 @@ using UnityEngine;
 
 namespace GameMap.Generator {
     public class TileObject : MonoBehaviour {
-        [SerializeField] TileElements thisTileElements;
+        [SerializeField] Transform tileElementsParent;
+        TileElements tileElements;
 
         Action<Vector2Int> PlayerIsOnTile = delegate { };
         public Vector2Int localPos, worldPos;
@@ -12,7 +13,13 @@ namespace GameMap.Generator {
         float tileSize;
         int axisTilesNumber, tilesFromCorner;
        
-        public void Init(Vector2Int wPos, int _id, float _tileSize, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos) {
+        public void Init(Vector2Int wPos, int _id, float _tileSize, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos, int elSpacing, int maxElDens) {     
+            tileElements = new(Mathf.FloorToInt(_tileSize), elSpacing, maxElDens, tileElementsParent);
+
+            ///rescale colliders
+            GetComponents<BoxCollider>()[0].size = new Vector3(_tileSize * 0.5f, 0.05f, _tileSize);
+            GetComponents<BoxCollider>()[1].size = new Vector3(_tileSize, 0.05f, _tileSize * 0.5f);
+
             PlayerIsOnTile = playerColCallback;              
             localPos = _localPos.HasValue ? _localPos.Value : new Vector2Int(wPos.x + tFromPlayer, wPos.y + tFromPlayer);
             worldPos = wPos;
@@ -21,9 +28,10 @@ namespace GameMap.Generator {
             tileSize = _tileSize;
             axisTilesNumber = (tFromPlayer * 2) + 1;
             tilesFromCorner = tFromPlayer * 2;
-            thisTileElements.Init(worldPos == Vector2Int.zero);
+            tileElements.Init(worldPos == Vector2Int.zero);
             mat.SetTexture("_MainTex", MapDataManager.Instance.GetRndGround());
             GetComponentInChildren<MeshFilter>().mesh = tileMesh;
+            tileElementsParent.localPosition = new Vector3(-tileSize * 0.5f, 0, -tileSize * 0.5f);
         }
 
         #region moving tiles
