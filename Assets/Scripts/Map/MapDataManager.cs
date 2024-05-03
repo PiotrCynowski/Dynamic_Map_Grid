@@ -2,6 +2,7 @@ using PoolSpawner;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace GameMap.Generator {
     public class MapDataManager : MonoBehaviour {
@@ -18,7 +19,7 @@ namespace GameMap.Generator {
         private Transform _player;
         public Transform Player {
             get {
-                if(_player == null) {
+                if (_player == null) {
                     _player = GameObject.FindGameObjectWithTag("Player").transform;
                 }
                 return _player;
@@ -26,6 +27,7 @@ namespace GameMap.Generator {
         }
 
         Dictionary<Vector2, Vector3[]> dataTileList = new();
+        readonly string filePath = Path.Combine(Application.persistentDataPath, "data.json");
 
         void Awake() {
             if (Instance != null && Instance != this) {
@@ -70,21 +72,92 @@ namespace GameMap.Generator {
         }
         #endregion
 
-        #region save load game file
+        #region save game file
         public void SaveTilesData() {
-            string filePath = Path.Combine(Application.persistentDataPath, "data.json");
+            List<TileData> tileData = new List<TileData>();
+            foreach (Vector2 key in dataTileList.Keys) {
+                tileData.Add(new TileData(key, dataTileList[key]));
+            }
 
+            SerializableTileInfoArray saveGame = new(tileData.ToArray(), Player.position);
+            string json = JsonUtility.ToJson(saveGame);
+            File.WriteAllText(filePath, FormatJsonString(json));
+        }
+
+        private string FormatJsonString(string json) {
+            int indentLevel = 0;
+            var formattedJson = new StringWriter();
+            char[] chars = json.ToCharArray();
+
+            for (int i = 0, spaces = 0; i < chars.Length; i++) {
+                switch (chars[i]) {
+                    case '[':
+                    case '{':
+                        formattedJson.Write(chars[i]);
+                        formattedJson.WriteLine();
+                        indentLevel++;
+                        spaces = indentLevel * 4;
+                        formattedJson.Write(new string(' ', spaces));
+                        break;
+                    case ']':
+                    case '}':
+                        formattedJson.WriteLine();
+                        indentLevel--;
+                        spaces = indentLevel * 4;
+                        formattedJson.Write(new string(' ', spaces));
+                        formattedJson.Write(chars[i]);
+                        break;
+                    case ',':
+                        formattedJson.Write(chars[i]);
+                        formattedJson.WriteLine();
+                        spaces = indentLevel * 4;
+                        formattedJson.Write(new string(' ', spaces));
+                        break;
+                    default:
+                        formattedJson.Write(chars[i]);
+                        break;
+                }
+            }
+
+            return formattedJson.ToString();
+        }
+        #endregion
+
+        #region load game file
+        public void LoadSaveGame() {
+            if (File.Exists(filePath)) {
+                string json = File.ReadAllText(filePath);
+                SerializableTileInfoArray deserializedData = JsonUtility.FromJson<SerializableTileInfoArray>(json);
+
+                if (deserializedData != null && deserializedData.tileInfoArray != null) {
+                    foreach (TileData tileData in deserializedData.tileInfoArray) {
+                        dataTileList.Add(tileData.tileData, tileData.tileElementsData);
+                    }
+                }
+            }
         }
         #endregion
     }
 }
 
-[System.Serializable]
-public class TileInfo {
+        [System.Serializable]
+public class TileData {
     public Vector2 tileData;
     public Vector3[] tileElementsData;
-    public TileInfo(Vector2 vector2Value, Vector3[] vector3Array) {
+    public TileData(Vector2 vector2Value, Vector3[] vector3Array) {
         this.tileData = vector2Value;
         this.tileElementsData = vector3Array;
+    }
+}
+
+[System.Serializable]
+public class SerializableTileInfoArray {
+    public TileData[] tileInfoArray;
+    public Vector3 playerPosition;
+    int tilesize;
+
+    public SerializableTileInfoArray(TileData[] array, Vector3 playerPosition) {
+        this.tileInfoArray = array;
+        this.playerPosition = playerPosition;   
     }
 }
