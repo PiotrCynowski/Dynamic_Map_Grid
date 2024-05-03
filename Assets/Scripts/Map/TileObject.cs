@@ -10,11 +10,10 @@ namespace GameMap.Generator {
         public Vector2Int localPos, worldPos;
         public int id;
         Vector2Int playerLocalPos;
-        float tileSize;
-        int axisTilesNumber, tilesFromCorner;
+        int tileSize, axisTilesNumber, tilesFromCorner;
        
-        public void Init(Vector2Int wPos, int _id, float _tileSize, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos, int elSpacing, int maxElDens) {     
-            tileElements = new(Mathf.FloorToInt(_tileSize), elSpacing, maxElDens, tileElementsParent);
+        public void Init(Vector2Int wPos, int _id, int _tileSize, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos, int elSpacing, int maxElDens) {     
+            tileElements = new(_tileSize, elSpacing, maxElDens, tileElementsParent);
 
             ///rescale colliders
             GetComponents<BoxCollider>()[0].size = new Vector3(_tileSize * 0.5f, 0.05f, _tileSize);
@@ -28,7 +27,7 @@ namespace GameMap.Generator {
             tileSize = _tileSize;
             axisTilesNumber = (tFromPlayer * 2) + 1;
             tilesFromCorner = tFromPlayer * 2;
-            tileElements.Init(worldPos == Vector2Int.zero);
+            tileElements.Init(worldPos);
             mat.SetTexture("_MainTex", MapDataManager.Instance.GetRndGround());
             GetComponentInChildren<MeshFilter>().mesh = tileMesh;
             tileElementsParent.localPosition = new Vector3(-tileSize * 0.5f, 0, -tileSize * 0.5f);
@@ -59,6 +58,7 @@ namespace GameMap.Generator {
             }
 
             worldPos = playerWorldPos + (localPos - playerLocalPos);
+            tileElements.Refresh(worldPos);
         }
 
         bool IsCorner(Vector2Int moved) {

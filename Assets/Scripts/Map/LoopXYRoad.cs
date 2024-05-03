@@ -6,7 +6,7 @@ namespace GameMap.Generator {
     public class LoopXYRoad : MonoBehaviour {
         [Header("Tiles")]
         [SerializeField] TileObject Tiles;
-        [SerializeField] float tileSize;
+        [SerializeField] int tileSize;
         [SerializeField] int tilesNumberDistanceFromPlayer;
 
         [Header("Tile elements")]
@@ -69,8 +69,8 @@ namespace GameMap.Generator {
        public Mesh GetNewTile(float tileSize) {
             Mesh mesh = new();
 
-            float halfWidth = tileSize / 2f;
-            float halfHeight = tileSize / 2f;
+            float halfWidth = tileSize * 0.5f;
+            float halfHeight = tileSize * 0.5f;
 
             Vector3[] vertices = new Vector3[4];
             vertices[0] = new Vector3(-halfWidth, 0f, -halfHeight); 

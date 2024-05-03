@@ -1,3 +1,4 @@
+using GameMap.Generator;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,10 +11,27 @@ public class TextureSaveLoad : MonoBehaviour {
         Test();
     }
 
+    public static TextureSaveLoad Instance;
+    void Awake() {
+        if (Instance != null && Instance != this) {
+            Destroy(this.gameObject);
+        }
+        else {
+            Instance = this;
+        }
+    }
+
     void Test() {
         Texture2D generatedTexture = GenerateTexture(64,64);
         SetPixelColor(generatedTexture, 10, 10, Color.red);
         imageUI.sprite = Sprite.Create(generatedTexture, new Rect(0, 0, generatedTexture.width, generatedTexture.height), Vector2.one * 0.5f);
+    }
+
+    public void Test2(int tileSize, float[,] map) {
+
+        Texture2D generatedTexture = GenerateTexture(tileSize, tileSize);
+
+        ModifyTextureFromFloatArray(generatedTexture, map, Color.magenta);
     }
 
     Texture2D GenerateTexture(int width, int height) {
@@ -42,12 +60,14 @@ public class TextureSaveLoad : MonoBehaviour {
                 SetPixelColor(textureToModify, x, y, pixelColor);
             }
         }
+
+      
     }
 
     void SetPixelColor(Texture2D textureToModdify, int x, int y, Color color) {
         if (x >= 0 && x < textureToModdify.width && y >= 0 && y < textureToModdify.height) {
             textureToModdify.SetPixel(x, y, color);
-            //textureToModdify.Apply(); LAST
+            textureToModdify.Apply();
         }
         else {
             Debug.LogError("Invalid pixel coordinates or texture not generated yet.");
