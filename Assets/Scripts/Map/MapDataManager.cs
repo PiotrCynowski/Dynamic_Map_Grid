@@ -2,7 +2,6 @@ using PoolSpawner;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 namespace GameMap.Generator {
     public class MapDataManager : MonoBehaviour {
@@ -25,9 +24,14 @@ namespace GameMap.Generator {
                 return _player;
             }
         }
+        Vector3 playerPosition;
+        Vector2Int playerWorldPosition;
+        public delegate void playerReady();
+        public event playerReady OnPlayerReady;
 
-        Dictionary<Vector2, Vector3[]> dataTileList = new();
-        readonly string filePath = Path.Combine(Application.persistentDataPath, "data.json");
+        Dictionary<Vector2, TileData> dataTileList = new();
+        TileSettings tileSettings;
+        string filePath;
 
         void Awake() {
             if (Instance != null && Instance != this) {
@@ -37,6 +41,9 @@ namespace GameMap.Generator {
                 Instance = this;
             }
 
+            LoopXYRoad.OnPlayerWPosUpdate += UpdatePlayerWPos;
+
+            filePath = Path.Combine(Application.persistentDataPath, "data.json");
             AddObjectPool();
             groundTexLen = groundTextures.Length;
         }
@@ -48,38 +55,62 @@ namespace GameMap.Generator {
             }
         }
 
+        void UpdatePlayerWPos(Vector2Int wPos) {
+            playerWorldPosition = wPos;
+        }
+
         private void OnApplicationQuit() {
             SaveTilesData();
         }
 
         #region Get Map Elements
-        public Texture2D GetRndGround() {
-            return groundTextures[Random.Range(0, groundTexLen)];
+        public (int,Texture2D) GetRndGround() {
+            int groundID = Random.Range(0, groundTexLen);
+            return (groundID, groundTextures[groundID]);
+        }
+
+        public Texture2D GetGroundByID(int ID) {
+            return groundTextures[ID];
         }
         #endregion
 
         #region save load game locally
-        public void AddTileData(Vector2 tilePos, Vector3[] tileElementsData) {
-            dataTileList.Add(tilePos, tileElementsData);
+        public void PreparePlayer(bool isNewGame) {
+            Player.transform.position = isNewGame ? Vector3.zero : playerPosition;
+            Player.GetComponent<Collider>().enabled = true;
+        }
+
+        public void AddTileData(Vector2 tilePos, Vector3[] tileElementsData, int groundID) {
+            dataTileList.Add(tilePos, new TileData(tilePos, tileElementsData, groundID));
         }
 
         public bool IsTileExist(Vector2 tilePos) {
             return dataTileList.ContainsKey(tilePos);
         }
 
-        public Vector3[] GetTileData(Vector2 tilePos) {
-            return dataTileList[tilePos];
+        public (Vector3[], int groundID) GetTileData(Vector2 tilePos) {
+            return (dataTileList[tilePos].tileElementsData, dataTileList[tilePos].groundID);
         }
+
+        public Vector2Int LoadPlayerWPos() {
+            return playerWorldPosition;
+        }
+
+        public void PrepareTileSettings(TileSettings newTileSettings) {
+            tileSettings = newTileSettings;
+        }
+
+        public TileSettings GetTileSettings() { return tileSettings; }
         #endregion
 
         #region save game file
         public void SaveTilesData() {
             List<TileData> tileData = new List<TileData>();
             foreach (Vector2 key in dataTileList.Keys) {
-                tileData.Add(new TileData(key, dataTileList[key]));
+                tileData.Add(dataTileList[key]);
             }
 
-            SerializableTileInfoArray saveGame = new(tileData.ToArray(), Player.position);
+            SerializableTileInfoArray saveGame = new(tileData.ToArray(), Player.position, playerWorldPosition, tileSettings);
             string json = JsonUtility.ToJson(saveGame);
             File.WriteAllText(filePath, FormatJsonString(json));
         }
@@ -124,29 +155,40 @@ namespace GameMap.Generator {
         #endregion
 
         #region load game file
-        public void LoadSaveGame() {
-            if (File.Exists(filePath)) {
-                string json = File.ReadAllText(filePath);
-                SerializableTileInfoArray deserializedData = JsonUtility.FromJson<SerializableTileInfoArray>(json);
+        public bool LoadSaveGame() {
+            if (!File.Exists(filePath)) {
+                return false;
+            }
+            
+            string json = File.ReadAllText(filePath);
+            SerializableTileInfoArray deserializedData = JsonUtility.FromJson<SerializableTileInfoArray>(json);
 
-                if (deserializedData != null && deserializedData.tileInfoArray != null) {
-                    foreach (TileData tileData in deserializedData.tileInfoArray) {
-                        dataTileList.Add(tileData.tileData, tileData.tileElementsData);
-                    }
+            if (deserializedData != null && deserializedData.tileInfoArray != null) {
+                foreach (TileData tileData in deserializedData.tileInfoArray) {
+                    dataTileList.Add(tileData.tileData, tileData);
                 }
             }
+
+            PrepareTileSettings(deserializedData.tileSettings);
+            playerWorldPosition = deserializedData.playerWorldPosition;
+            playerPosition = deserializedData.playerPosition;
+
+            return true;
         }
         #endregion
     }
 }
 
-        [System.Serializable]
+#region Save Game Data
+[System.Serializable]
 public class TileData {
     public Vector2 tileData;
     public Vector3[] tileElementsData;
-    public TileData(Vector2 vector2Value, Vector3[] vector3Array) {
+    public int groundID;
+    public TileData(Vector2 vector2Value, Vector3[] vector3Array, int groundID) {
         this.tileData = vector2Value;
         this.tileElementsData = vector3Array;
+        this.groundID = groundID;
     }
 }
 
@@ -154,10 +196,26 @@ public class TileData {
 public class SerializableTileInfoArray {
     public TileData[] tileInfoArray;
     public Vector3 playerPosition;
-    int tilesize;
+    public Vector2Int playerWorldPosition;
+    public TileSettings tileSettings;
 
-    public SerializableTileInfoArray(TileData[] array, Vector3 playerPosition) {
+    public SerializableTileInfoArray(TileData[] array, Vector3 playerPosition, Vector2Int playerWPos, TileSettings tileSettings) {
         this.tileInfoArray = array;
-        this.playerPosition = playerPosition;   
+        this.playerPosition = playerPosition;
+        this.playerWorldPosition = playerWPos;
+        this.tileSettings = tileSettings;
     }
 }
+
+[System.Serializable]
+public class TileSettings {
+    public int tileSize;
+    public int elementsSpacing;
+    public int maxElementDensity;
+    public TileSettings(int tlSize, int elSpacing, int maxDensity) {
+        tileSize = tlSize;
+        elementsSpacing = elSpacing;
+        maxElementDensity = maxDensity;
+    }
+}
+#endregion

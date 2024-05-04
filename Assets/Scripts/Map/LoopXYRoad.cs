@@ -17,10 +17,20 @@ namespace GameMap.Generator {
         Vector2Int playerTileGPos, playerTileWorldPos, movedBy; //lastGPos;
         bool isInPlayerRange;
 
+        public delegate void playerWPosUpdated(Vector2Int wPos);
+        public static event playerWPosUpdated OnPlayerWPosUpdate;
+
         IEnumerator Start() {
             playerTileGPos = new Vector2Int(tilesNumberDistanceFromPlayer, tilesNumberDistanceFromPlayer);
-            playerTileWorldPos = Vector2Int.zero;
-            GenerateTilesPositionsAroundPlayer();
+           
+            ///check save game
+            if (MapDataManager.Instance.LoadSaveGame())
+                LoadTilesPositionsAroundPlayer();
+            else {
+                GenerateTilesPositionsAroundPlayer();
+                playerTileWorldPos = Vector2Int.zero;
+            }
+
             yield return null;
         }
 
@@ -29,30 +39,55 @@ namespace GameMap.Generator {
             TileGenerator tileGenerator = new();
             Mesh tileMesh = tileGenerator.GetNewTile(tileSize);
 
+            TileSettings tileSettings = new TileSettings(tileSize, elementsSpacing, maxElementsDensity);
+
             Material mat = Tiles.GetComponentInChildren<MeshRenderer>().sharedMaterial;
             Material thisMat;
             GameObject tile;
             tileDatas = new();
-            int ID = 0;
 
             for (int row = -tilesNumberDistanceFromPlayer; row <= tilesNumberDistanceFromPlayer; row++) {
                 for (int col = -tilesNumberDistanceFromPlayer; col <= tilesNumberDistanceFromPlayer; col++) {
                     tile = Instantiate(Tiles.gameObject, new Vector3(row * tileSize, 0, col * tileSize), Quaternion.identity, gameObject.transform);
                     thisMat = tile.GetComponentInChildren<MeshRenderer>().material = new(mat);
-                    thisMat.SetTexture("_MainTex", MapDataManager.Instance.GetRndGround());
-                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), ID, tileSize, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, null, elementsSpacing, maxElementsDensity);
+                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, null);
                     tileDatas.Add(tile.GetComponent<TileObject>());
-                    ID++;
                 }
             }
+
+            MapDataManager.Instance.PrepareTileSettings(tileSettings);
+            MapDataManager.Instance.PreparePlayer(true);
+        }
+
+        public void LoadTilesPositionsAroundPlayer() {
+            TileSettings tileSettings = MapDataManager.Instance.GetTileSettings();
+            playerTileWorldPos = MapDataManager.Instance.LoadPlayerWPos();
+
+            TileGenerator tileGenerator = new();
+            Mesh tileMesh = tileGenerator.GetNewTile(tileSize);
+
+            Material mat = Tiles.GetComponentInChildren<MeshRenderer>().sharedMaterial;
+            Material thisMat;
+            GameObject tile;
+            tileDatas = new();
+
+            for (int row = playerTileWorldPos.x - tilesNumberDistanceFromPlayer, lRow = 0; row <= playerTileWorldPos.x + tilesNumberDistanceFromPlayer; row++, lRow++) {
+                for (int col = playerTileWorldPos.y - tilesNumberDistanceFromPlayer, lCol = 0; col <= playerTileWorldPos.y + tilesNumberDistanceFromPlayer; col++, lCol++) {
+                    
+                    tile = Instantiate(Tiles.gameObject, new Vector3(row * tileSettings.tileSize, 0, col * tileSettings.tileSize), Quaternion.identity, gameObject.transform);
+                    thisMat = tile.GetComponentInChildren<MeshRenderer>().material = new(mat);
+                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, new Vector2Int(lRow, lCol));
+                    tileDatas.Add(tile.GetComponent<TileObject>());
+                }
+            }
+
+            MapDataManager.Instance.PreparePlayer(false);
         }
 
         void PlayerStandsOnTile(Vector2Int gPos) {
-            //lastGPos = gPos;
-
             movedBy = new Vector2Int(gPos.x - playerTileGPos.x, gPos.y - playerTileGPos.y);
             playerTileWorldPos += movedBy;
-
+            OnPlayerWPosUpdate(playerTileWorldPos);
 
             for (int i = 0; i < tileDatas.Count; i++) {
 

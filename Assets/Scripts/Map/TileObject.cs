@@ -8,33 +8,44 @@ namespace GameMap.Generator {
 
         Action<Vector2Int> PlayerIsOnTile = delegate { };
         public Vector2Int localPos, worldPos;
-        public int id;
         Vector2Int playerLocalPos;
         int tileSize, axisTilesNumber, tilesFromCorner;
-       
-        public void Init(Vector2Int wPos, int _id, int _tileSize, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos, int elSpacing, int maxElDens) {     
-            tileElements = new(_tileSize, elSpacing, maxElDens, tileElementsParent);
+        bool isStartingTile = false;
+
+        public void Init(Vector2Int wPos, TileSettings settings, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos) {     
+            tileElements = new(settings.tileSize, settings.elementsSpacing, settings.maxElementDensity, tileElementsParent);
 
             ///rescale colliders
-            GetComponents<BoxCollider>()[0].size = new Vector3(_tileSize * 0.5f, 0.05f, _tileSize);
-            GetComponents<BoxCollider>()[1].size = new Vector3(_tileSize, 0.05f, _tileSize * 0.5f);
+            GetComponents<BoxCollider>()[0].size = new Vector3(settings.tileSize * 0.5f, 0.05f, settings.tileSize);
+            GetComponents<BoxCollider>()[1].size = new Vector3(settings.tileSize, 0.05f, settings.tileSize * 0.5f);
 
-            PlayerIsOnTile = playerColCallback;              
+            PlayerIsOnTile = playerColCallback;
             localPos = _localPos.HasValue ? _localPos.Value : new Vector2Int(wPos.x + tFromPlayer, wPos.y + tFromPlayer);
+
+            if (localPos == new Vector2Int(tFromPlayer, tFromPlayer)) {
+                GetComponents<BoxCollider>()[0].enabled = false;
+                GetComponents<BoxCollider>()[1].enabled = false;
+                isStartingTile = true;
+            }
+
             worldPos = wPos;
-            id = _id;
             playerLocalPos = new Vector2Int(tFromPlayer, tFromPlayer);
-            tileSize = _tileSize;
+            tileSize = settings.tileSize;
             axisTilesNumber = (tFromPlayer * 2) + 1;
             tilesFromCorner = tFromPlayer * 2;
-            tileElements.Init(worldPos);
-            mat.SetTexture("_MainTex", MapDataManager.Instance.GetRndGround());
+            tileElements.Init(worldPos, mat, _localPos.HasValue);
             GetComponentInChildren<MeshFilter>().mesh = tileMesh;
             tileElementsParent.localPosition = new Vector3(-tileSize * 0.5f, 0, -tileSize * 0.5f);
         }
 
         #region moving tiles
         public void MoveTiles(Vector2Int movedBy, Vector2Int playerWorldPos, bool isInPlayerRange) {
+            if(isStartingTile){
+                GetComponents<BoxCollider>()[0].enabled = true;
+                GetComponents<BoxCollider>()[1].enabled = true;
+                isStartingTile = false;
+            }
+                    
             if (isInPlayerRange) {
                 localPos -= movedBy;
                 return;
