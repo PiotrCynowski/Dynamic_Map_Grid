@@ -85,6 +85,11 @@ namespace GameMap.Generator {
         }
 
         void PlayerStandsOnTile(Vector2Int gPos) {
+            if(playerTileGPos == gPos) {
+                return;
+            }
+            
+            
             movedBy = new Vector2Int(gPos.x - playerTileGPos.x, gPos.y - playerTileGPos.y);
             playerTileWorldPos += movedBy;
             OnPlayerWPosUpdate(playerTileWorldPos);

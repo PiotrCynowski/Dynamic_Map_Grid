@@ -10,7 +10,6 @@ namespace GameMap.Generator {
         public Vector2Int localPos, worldPos;
         Vector2Int playerLocalPos;
         int tileSize, axisTilesNumber, tilesFromCorner;
-        bool isStartingTile = false;
 
         public void Init(Vector2Int wPos, TileSettings settings, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos) {     
             tileElements = new(settings.tileSize, settings.elementsSpacing, settings.maxElementDensity, tileElementsParent);
@@ -22,30 +21,18 @@ namespace GameMap.Generator {
             PlayerIsOnTile = playerColCallback;
             localPos = _localPos.HasValue ? _localPos.Value : new Vector2Int(wPos.x + tFromPlayer, wPos.y + tFromPlayer);
 
-            if (localPos == new Vector2Int(tFromPlayer, tFromPlayer)) {
-                GetComponents<BoxCollider>()[0].enabled = false;
-                GetComponents<BoxCollider>()[1].enabled = false;
-                isStartingTile = true;
-            }
-
             worldPos = wPos;
             playerLocalPos = new Vector2Int(tFromPlayer, tFromPlayer);
             tileSize = settings.tileSize;
             axisTilesNumber = (tFromPlayer * 2) + 1;
-            tilesFromCorner = tFromPlayer * 2;
-            tileElements.Init(worldPos, mat, _localPos.HasValue);
+            tilesFromCorner = tFromPlayer * 2;          
             GetComponentInChildren<MeshFilter>().mesh = tileMesh;
             tileElementsParent.localPosition = new Vector3(-tileSize * 0.5f, 0, -tileSize * 0.5f);
+            tileElements.Init(worldPos, mat, _localPos.HasValue);
         }
 
         #region moving tiles
-        public void MoveTiles(Vector2Int movedBy, Vector2Int playerWorldPos, bool isInPlayerRange) {
-            if(isStartingTile){
-                GetComponents<BoxCollider>()[0].enabled = true;
-                GetComponents<BoxCollider>()[1].enabled = true;
-                isStartingTile = false;
-            }
-                    
+        public void MoveTiles(Vector2Int movedBy, Vector2Int playerWorldPos, bool isInPlayerRange) {    
             if (isInPlayerRange) {
                 localPos -= movedBy;
                 return;

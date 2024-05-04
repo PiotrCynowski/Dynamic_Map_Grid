@@ -77,7 +77,7 @@ namespace GameMap.Generator {
         #region save load game locally
         public void PreparePlayer(bool isNewGame) {
             Player.transform.position = isNewGame ? Vector3.zero : playerPosition;
-            Player.GetComponent<Collider>().enabled = true;
+            //Player.GetComponent<Collider>().enabled = true;
         }
 
         public void AddTileData(Vector2 tilePos, Vector3[] tileElementsData, int groundID) {
