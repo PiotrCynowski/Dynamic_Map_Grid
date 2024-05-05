@@ -31,8 +31,9 @@ namespace PoolSpawner {
             return poolObjList[_id].Get();
         }
 
-        public GameObject GetRandomSpawnObject() {
-            return poolObjList[Random.Range(0, availableElements)].Get();
+        public (int, GameObject) GetRandomSpawnObject() {
+            int ID = Random.Range(0, availableElements);
+            return (ID,poolObjList[ID].Get());
         }
 
         public void ThisObjReleased(GameObject _obj, int _id) {
