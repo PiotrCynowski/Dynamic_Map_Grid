@@ -39,7 +39,7 @@ namespace GameMap.Generator {
             TileGenerator tileGenerator = new();
             Mesh tileMesh = tileGenerator.GetNewTile(tileSize);
 
-            TileSettings tileSettings = new TileSettings(tileSize, elementsSpacing, maxElementsDensity);
+            TileSettings tileSettings = new(tileSize, elementsSpacing, maxElementsDensity);
 
             Material mat = Tiles.GetComponentInChildren<MeshRenderer>().sharedMaterial;
             Material thisMat;
@@ -64,7 +64,7 @@ namespace GameMap.Generator {
             playerTileWorldPos = MapDataManager.Instance.LoadPlayerWPos();
 
             TileGenerator tileGenerator = new();
-            Mesh tileMesh = tileGenerator.GetNewTile(tileSize);
+            Mesh tileMesh = tileGenerator.GetNewTile(tileSettings.tileSize);
 
             Material mat = Tiles.GetComponentInChildren<MeshRenderer>().sharedMaterial;
             Material thisMat;
@@ -84,12 +84,12 @@ namespace GameMap.Generator {
             MapDataManager.Instance.PreparePlayer(false);
         }
 
+        ///Callback for when the player stands on a new tile
         void PlayerStandsOnTile(Vector2Int gPos) {
             if(playerTileGPos == gPos) {
                 return;
             }
-            
-            
+              
             movedBy = new Vector2Int(gPos.x - playerTileGPos.x, gPos.y - playerTileGPos.y);
             playerTileWorldPos += movedBy;
             OnPlayerWPosUpdate(playerTileWorldPos);

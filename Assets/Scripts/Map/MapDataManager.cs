@@ -6,7 +6,7 @@ using UnityEngine;
 namespace GameMap.Generator {
     public class MapDataManager : MonoBehaviour {
         public static MapDataManager Instance;
-        [Header("Pool Elements")]
+        [Header("Tile Ground")]
         [SerializeField] Texture2D[] groundTextures;
         int groundTexLen;
 
@@ -14,7 +14,6 @@ namespace GameMap.Generator {
         [SerializeField] GameObject[] mapElements;
         public SpawnWithPool poolMapElements { get; private set; }
 
-        [Header("ref")]
         private Transform _player;
         public Transform Player {
             get {
@@ -74,10 +73,9 @@ namespace GameMap.Generator {
         }
         #endregion
 
-        #region save load game locally
+        #region Save Load Game Local
         public void PreparePlayer(bool isNewGame) {
             Player.transform.position = isNewGame ? Vector3.zero : playerPosition;
-            //Player.GetComponent<Collider>().enabled = true;
         }
 
         public void AddTileData(Vector2 tilePos, Vector3[] tileElementsData, int groundID) {
@@ -103,7 +101,7 @@ namespace GameMap.Generator {
         public TileSettings GetTileSettings() { return tileSettings; }
         #endregion
 
-        #region save game file
+        #region Save Game File
         public void SaveTilesData() {
             List<TileData> tileData = new List<TileData>();
             foreach (Vector2 key in dataTileList.Keys) {
@@ -154,7 +152,7 @@ namespace GameMap.Generator {
         }
         #endregion
 
-        #region load game file
+        #region Load Game File
         public bool LoadSaveGame() {
             if (!File.Exists(filePath)) {
                 return false;
