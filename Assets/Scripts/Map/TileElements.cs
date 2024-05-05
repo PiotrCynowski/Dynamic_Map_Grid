@@ -6,6 +6,7 @@ namespace GameMap.Generator {
         readonly int forestSize, elementSpacing, maxDensity;
         int density;
         Transform container;
+        Dictionary<int, List<GameObject>> elements = new();
         Material groundMat;
 
         public TileElements(int forestSize, int elementSpacing, int maxDensity, Transform containerElements) {
@@ -22,18 +23,21 @@ namespace GameMap.Generator {
                 Refresh(worldPos);
                 return;
             }
-            
+
             if (worldPos != Vector2Int.zero) {
                 density = Random.Range(0, maxDensity);
                 GenerateElements(worldPos);
             }
         }
-        
+
         public void Refresh(Vector2Int worldPos) {
-            foreach (Transform obj in container) {
-                if (obj.gameObject.activeSelf)
-                    MapDataManager.Instance.poolMapElements.ThisObjReleased(obj.gameObject, 0);
+            foreach (int key in elements.Keys) {
+                foreach (GameObject obj in elements[key]) {
+                    if (obj.activeSelf)
+                        MapDataManager.Instance.poolMapElements.ThisObjReleased(obj, key);
+                }
             }
+            elements.Clear();
             density = Random.Range(0, maxDensity);
 
             if (MapDataManager.Instance.IsTileExist(worldPos)) {
@@ -44,7 +48,6 @@ namespace GameMap.Generator {
 
         void GenerateElements(Vector2Int worldPos) {
             List<Vector3> tileElements = new List<Vector3>();
-            GameObject newElement;
             int containerX = (int)container.position.x;
             int containerZ = (int)container.position.z;
             int endX = containerX + forestSize;
@@ -53,12 +56,11 @@ namespace GameMap.Generator {
             for (int x = containerX; x < endX; x += elementSpacing) {
                 for (int z = containerZ; z < endZ; z += elementSpacing) {
                     if (Random.Range(0, 100) < density) {
-                        newElement = MapDataManager.Instance.poolMapElements.GetSpawnObject(0);
+                        (int ID, GameObject newElement) = MapDataManager.Instance.poolMapElements.GetRandomSpawnObject();
                         newElement.transform.SetParent(container);
-                        //newElement.transform.position = new Vector3(x, 0f, z) + new Vector3(Random.Range(-0.75f, 0.75f), 0f, Random.Range(-0.75f, 0.75f)); ///position + offset
                         newElement.transform.position = new Vector3(x, 0f, z); ///position 
-                        //newElement.transform.localScale = Vector3.one * Random.Range(0.9f, 1.4f); ///scale  
-                        tileElements.Add(new Vector3(x, z, 1));
+                        tileElements.Add(new Vector3(x, z, ID));
+                        AddElement(ID, newElement);
                     }
                 }
             }
@@ -71,14 +73,23 @@ namespace GameMap.Generator {
         void LoadElements(Vector2Int worldPos) {
             (Vector3[] tileData, int groundID) = MapDataManager.Instance.GetTileData(worldPos);
             GameObject newElement;
+            int objID;
 
             for (int i = 0; i < tileData.Length; i++) {
-                    newElement = MapDataManager.Instance.poolMapElements.GetSpawnObject(0);
-                    newElement.transform.SetParent(container);
-                    newElement.transform.position = new Vector3(tileData[i].x, 0f, tileData[i].y); ///position               
+                objID = (int)tileData[i].z;
+                newElement = MapDataManager.Instance.poolMapElements.GetSpawnObject(objID);
+                newElement.transform.SetParent(container);
+                newElement.transform.position = new Vector3(tileData[i].x, 0f, tileData[i].y); ///position 
+                AddElement(objID,newElement);
             }
 
             groundMat.SetTexture("_MainTex", MapDataManager.Instance.GetGroundByID(groundID));
+        }
+
+        void AddElement(int ID, GameObject obj) {
+            if (!elements.ContainsKey(ID))
+                elements[ID] = new List<GameObject>();
+            elements[ID].Add(obj);
         }
     }
 }
