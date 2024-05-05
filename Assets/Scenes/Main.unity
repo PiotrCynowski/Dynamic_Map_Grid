@@ -607,22 +607,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5754730967954257787, guid: 2184d3689a74d894fa21fd76d7618c93, type: 3}
-      propertyPath: tileSize
-      value: 15
-      objectReference: {fileID: 0}
-    - target: {fileID: 5754730967954257787, guid: 2184d3689a74d894fa21fd76d7618c93, type: 3}
-      propertyPath: elementsSpacing
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5754730967954257787, guid: 2184d3689a74d894fa21fd76d7618c93, type: 3}
-      propertyPath: maxElementsDensity
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 5754730967954257787, guid: 2184d3689a74d894fa21fd76d7618c93, type: 3}
-      propertyPath: tilesNumberDistanceFromPlayer
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 8935283454060885087, guid: 2184d3689a74d894fa21fd76d7618c93, type: 3}
       propertyPath: m_Name
       value: Map

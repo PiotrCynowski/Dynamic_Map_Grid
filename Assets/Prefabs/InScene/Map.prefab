@@ -47,3 +47,5 @@ MonoBehaviour:
   Tiles: {fileID: 2193625449732693592, guid: 8a0741f6bcf44fb4a9cc96c2dcf3acc4, type: 3}
   tileSize: 15
   tilesNumberDistanceFromPlayer: 2
+  elementsSpacing: 3
+  maxElementsDensity: 50
