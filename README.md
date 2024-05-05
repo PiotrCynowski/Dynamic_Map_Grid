@@ -6,6 +6,8 @@ Project was created using Unity Engine.
 
 ![me](https://github.com/PiotrCynowski/Dynamic_Map_Grid/blob/master/pic/map_generation.gif)
 
+#### SAVE/LOAD
+Save-Load system for tiles, tile textures, and elements from the object pool. The save data is stored as a JSON file, which is loaded upon startup
 
 *Map data example*
 
