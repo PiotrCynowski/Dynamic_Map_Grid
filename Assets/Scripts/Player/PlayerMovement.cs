@@ -1,12 +1,15 @@
 using UnityEngine;
 
-namespace Player {
-    public class PlayerMovement : MonoBehaviour {
-        [SerializeField] float moveSpeed = 5f;
-        float horizontalInput, verticalInput;
-        Vector3 moveDirection;
+namespace Player
+{
+    public class PlayerMovement : MonoBehaviour
+    {
+        [SerializeField] private float moveSpeed = 5f;
+        private float horizontalInput, verticalInput;
+        private Vector3 moveDirection;
 
-        void Update() {
+        private void Update()
+        {
             horizontalInput = Input.GetAxis("Horizontal");
             verticalInput = Input.GetAxis("Vertical");
             moveDirection = new Vector3(horizontalInput, 0f, verticalInput).normalized;
