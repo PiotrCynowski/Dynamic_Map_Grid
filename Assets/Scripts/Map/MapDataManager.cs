@@ -7,8 +7,8 @@ namespace GameMap.Generator {
     public class MapDataManager : MonoBehaviour {
         public static MapDataManager Instance;
         [Header("Tile Ground")]
-        [SerializeField] Texture2D[] groundTextures;
-        int groundTexLen;
+        [SerializeField] private Texture2D[] groundTextures;
+        private int groundTexLen;
 
         [Header("Pool Elements")]
         [SerializeField] GameObject[] mapElements;
@@ -23,16 +23,16 @@ namespace GameMap.Generator {
                 return _player;
             }
         }
-        Vector3 playerPosition;
-        Vector2Int playerWorldPosition;
+        private Vector3 playerPosition;
+        private Vector2Int playerWorldPosition;
         public delegate void playerReady();
         public event playerReady OnPlayerReady;
 
-        Dictionary<Vector2, TileData> dataTileList = new();
-        TileSettings tileSettings;
-        string filePath;
+        private Dictionary<Vector2, TileData> dataTileList = new();
+        private TileSettings tileSettings;
+        private string filePath;
 
-        void Awake() {
+        private void Awake() {
             if (Instance != null && Instance != this) {
                 Destroy(this.gameObject);
             }
@@ -47,18 +47,18 @@ namespace GameMap.Generator {
             groundTexLen = groundTextures.Length;
         }
 
-        void AddObjectPool() {
+        private void AddObjectPool() {
             poolMapElements = new();
             for (int i = 0; i < mapElements.Length; i++) {
                 poolMapElements.AddPoolForGameObject(mapElements[i], i);
             }
         }
 
-        void UpdatePlayerWPos(Vector2Int wPos) {
+        private void UpdatePlayerWPos(Vector2Int wPos) {
             playerWorldPosition = wPos;
         }
 
-        private void OnApplicationQuit() {
+        private private void OnApplicationQuit() {
             SaveTilesData();
         }
 

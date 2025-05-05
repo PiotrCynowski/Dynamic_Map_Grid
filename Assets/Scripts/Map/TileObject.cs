@@ -1,20 +1,22 @@
 ﻿using System;
 using UnityEngine;
 
-namespace GameMap.Generator {
-    public class TileObject : MonoBehaviour {
-        [SerializeField] Transform tileElementsParent;
-        TileElements tileElements;
+namespace GameMap.Generator
+{
+    public class TileObject : MonoBehaviour
+    {
+        [SerializeField] private Transform tileElementsContainer;
+        private TileElements tileElements;
 
-        Action<Vector2Int> PlayerIsOnTile = delegate { };
         public Vector2Int localPos, worldPos;
-        Vector2Int playerLocalPos;
-        int tileSize, axisTilesNumber, tilesFromCorner;
+        private Action<Vector2Int> PlayerIsOnTile = delegate { };
+        private Vector2Int playerLocalPos;
+        private int tileSize, axisTilesNumber, tilesFromCorner;
 
-        public void Init(Vector2Int wPos, TileSettings settings, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos) {     
-            tileElements = new(settings.tileSize, settings.elementsSpacing, settings.maxElementDensity, tileElementsParent);
+        public void Init(Vector2Int wPos, TileSettings settings, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos)
+        {
+            tileElements = new(settings.tileSize, settings.elementsSpacing, settings.maxElementDensity, tileElementsContainer);
 
-            ///rescale colliders
             GetComponents<BoxCollider>()[0].size = new Vector3(settings.tileSize * 0.5f, 0.05f, settings.tileSize);
             GetComponents<BoxCollider>()[1].size = new Vector3(settings.tileSize, 0.05f, settings.tileSize * 0.5f);
 
@@ -25,32 +27,38 @@ namespace GameMap.Generator {
             playerLocalPos = new Vector2Int(tFromPlayer, tFromPlayer);
             tileSize = settings.tileSize;
             axisTilesNumber = (tFromPlayer * 2) + 1;
-            tilesFromCorner = tFromPlayer * 2;          
+            tilesFromCorner = tFromPlayer * 2;
             GetComponentInChildren<MeshFilter>().mesh = tileMesh;
-            tileElementsParent.localPosition = new Vector3(-tileSize * 0.5f, 0, -tileSize * 0.5f);
+            tileElementsContainer.localPosition = new Vector3(-tileSize * 0.5f, 0, -tileSize * 0.5f);
             tileElements.Init(worldPos, mat, _localPos.HasValue);
         }
 
         #region moving tiles
-        public void MoveTiles(Vector2Int movedBy, Vector2Int playerWorldPos, bool isInPlayerRange) {    
-            if (isInPlayerRange) {
+        public void MoveTiles(Vector2Int movedBy, Vector2Int playerWorldPos, bool isInPlayerRange)
+        {
+            if (isInPlayerRange)
+            {
                 localPos -= movedBy;
                 return;
             }
 
-            if (movedBy.x != 0 && movedBy.y != 0 && (!IsCorner(movedBy))) {
-                if ((movedBy.x > 0 && localPos.x == 0) || (movedBy.x < 0 && localPos.x == tilesFromCorner)) {
+            if (movedBy.x != 0 && movedBy.y != 0 && (!IsCorner(movedBy)))
+            {
+                if ((movedBy.x > 0 && localPos.x == 0) || (movedBy.x < 0 && localPos.x == tilesFromCorner))
+                {
                     localPos.x += movedBy.x * tilesFromCorner;
                     localPos.y -= movedBy.y;
                     transform.position += new Vector3(movedBy.x * axisTilesNumber * tileSize, 0, 0);
                 }
-                else if ((movedBy.y > 0 && localPos.y == 0) || (movedBy.y < 0 && localPos.y == tilesFromCorner)) {
+                else if ((movedBy.y > 0 && localPos.y == 0) || (movedBy.y < 0 && localPos.y == tilesFromCorner))
+                {
                     localPos.x -= movedBy.x;
                     localPos.y += movedBy.y * tilesFromCorner;
                     transform.position += new Vector3(0, 0, movedBy.y * axisTilesNumber * tileSize);
                 }
             }
-            else {
+            else
+            {
                 localPos += movedBy * tilesFromCorner;
                 transform.position += new Vector3(movedBy.x * axisTilesNumber * tileSize, 0, movedBy.y * axisTilesNumber * tileSize);
             }
@@ -59,12 +67,15 @@ namespace GameMap.Generator {
             tileElements.Refresh(worldPos);
         }
 
-        bool IsCorner(Vector2Int moved) {
+        bool IsCorner(Vector2Int moved)
+        {
             return localPos == new Vector2Int(moved.x > 0 ? 0 : tilesFromCorner, moved.y > 0 ? 0 : tilesFromCorner);
         }
 
-        void OnTriggerEnter(Collider other) {
-            if (other.gameObject.layer != 8) {
+        void OnTriggerEnter(Collider other)
+        {
+            if (other.gameObject.layer != 8)
+            {
                 return;
             }
 

@@ -5,22 +5,22 @@ using UnityEngine;
 namespace GameMap.Generator {
     public class LoopXYRoad : MonoBehaviour {
         [Header("Tiles")]
-        [SerializeField] TileObject Tiles;
-        [SerializeField] int tileSize;
-        [SerializeField] int tilesNumberDistanceFromPlayer;
+        [SerializeField] private TileObject Tiles;
+        [SerializeField] private int tileSize;
+        [SerializeField] private int tilesNumberDistanceFromPlayer;
 
         [Header("Tile elements")]
-        [SerializeField] int elementsSpacing = 3;
-        [SerializeField] int maxElementsDensity = 50;
+        [SerializeField] private int elementsSpacing = 3;
+        [SerializeField] private int maxElementsDensity = 50;
 
-        List<TileObject> tileDatas;
-        Vector2Int playerTileGPos, playerTileWorldPos, movedBy; //lastGPos;
-        bool isInPlayerRange;
+        private List<TileObject> tileDatas;
+        private Vector2Int playerTileGPos, playerTileWorldPos, movedBy; //lastGPos;
+        private bool isInPlayerRange;
 
         public delegate void playerWPosUpdated(Vector2Int wPos);
         public static event playerWPosUpdated OnPlayerWPosUpdate;
 
-        IEnumerator Start() {
+        private IEnumerator Start() {
             playerTileGPos = new Vector2Int(tilesNumberDistanceFromPlayer, tilesNumberDistanceFromPlayer);
            
             ///check save game
@@ -85,7 +85,7 @@ namespace GameMap.Generator {
         }
 
         ///Callback for when the player stands on a new tile
-        void PlayerStandsOnTile(Vector2Int gPos) {
+        private void PlayerStandsOnTile(Vector2Int gPos) {
             if(playerTileGPos == gPos) {
                 return;
             }

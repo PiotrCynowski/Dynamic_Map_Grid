@@ -2,15 +2,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-namespace PoolSpawner {
-    public class SpawnWithPool {
-        readonly bool collectionChecks = true;
-        readonly int maxPoolSize = 10;
-        int availableElements = 0;
+namespace PoolSpawner
+{
+    public class SpawnWithPool
+    {
+        readonly private bool collectionChecks = true;
+        readonly private int maxPoolSize = 10;
+        private int availableElements = 0;
 
-        Dictionary<int, ObjectPool<GameObject>> poolObjList = new();
-        public void AddPoolForGameObject(GameObject _toSpawn, int _id) {
-            ObjectPool<GameObject> pool = new(() => {
+        private Dictionary<int, ObjectPool<GameObject>> poolObjList = new();
+
+        public void AddPoolForGameObject(GameObject _toSpawn, int _id)
+        {
+            ObjectPool<GameObject> pool = new(() =>
+            {
                 var obj = GameObject.Instantiate(_toSpawn, Vector3.zero, Quaternion.identity);
                 return obj;
             },
@@ -20,39 +25,44 @@ namespace PoolSpawner {
             availableElements++;
         }
 
-        public void ClearPool() {
+        public void ClearPool()
+        {
             poolObjList.Clear();
         }
 
-        public void Spawn(int _id) {
+        public void Spawn(int _id)
+        {
             poolObjList[_id].Get();
         }
-        public GameObject GetSpawnObject(int _id) {
+        public GameObject GetSpawnObject(int _id)
+        {
             return poolObjList[_id].Get();
         }
 
-        public (int, GameObject) GetRandomSpawnObject() {
+        public (int, GameObject) GetRandomSpawnObject()
+        {
             int ID = Random.Range(0, availableElements);
-            return (ID,poolObjList[ID].Get());
+            return (ID, poolObjList[ID].Get());
         }
 
-        public void ThisObjReleased(GameObject _obj, int _id) {
+        public void ThisObjReleased(GameObject _obj, int _id)
+        {
             poolObjList[_id].Release(_obj);
         }
 
-        #region poolOperations
-        void OnReturnedToPool(GameObject system) {
+        private void OnReturnedToPool(GameObject system)
+        {
             system.gameObject.SetActive(false);
         }
 
-        void OnTakeFromPool(GameObject system) {
+        private void OnTakeFromPool(GameObject system)
+        {
             system.gameObject.SetActive(true);
         }
 
-        // If the pool capacity is reached then any items returned will be destroyed.
-        void OnDestroyPoolObject(GameObject system) {
+        private void OnDestroyPoolObject(GameObject system)
+        {
             GameObject.Destroy(system.gameObject);
         }
-        #endregion  
     }
 }
