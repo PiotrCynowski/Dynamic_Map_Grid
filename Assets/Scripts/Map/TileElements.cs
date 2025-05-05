@@ -19,15 +19,18 @@ namespace GameMap.Generator
             container = containerElements;
         }
 
-        public void Init(Vector2Int worldPos, Material groundMaterial, bool isLoading)
+        public void Init(Vector2Int worldPos, Material groundMaterial, bool isLoading, bool isEndMap)
         {
             groundMat = groundMaterial;
 
             if (isLoading)
             {
-                Refresh(worldPos);
+                Refresh(worldPos, isEndMap);
                 return;
             }
+
+            if (isEndMap)
+                return;
 
             if (worldPos != Vector2Int.zero)
             {
@@ -36,7 +39,7 @@ namespace GameMap.Generator
             }
         }
 
-        public void Refresh(Vector2Int worldPos)
+        public void Refresh(Vector2Int worldPos, bool isEndMap)
         {
             foreach (int key in elements.Keys)
             {
@@ -47,6 +50,12 @@ namespace GameMap.Generator
                 }
             }
             elements.Clear();
+
+            if (isEndMap)
+            {
+                return;
+            }
+
             density = Random.Range(0, maxDensity);
 
             if (MapDataManager.Instance.IsTileExist(worldPos))

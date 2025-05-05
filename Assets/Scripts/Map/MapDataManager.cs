@@ -58,7 +58,7 @@ namespace GameMap.Generator {
             playerWorldPosition = wPos;
         }
 
-        private private void OnApplicationQuit() {
+        private void OnApplicationQuit() {
             SaveTilesData();
         }
 

@@ -8,6 +8,7 @@ namespace GameMap.Generator {
         [SerializeField] private TileObject Tiles;
         [SerializeField] private int tileSize;
         [SerializeField] private int tilesNumberDistanceFromPlayer;
+        [SerializeField] private int tilesNumberMaxDistanceFromCenter;
 
         [Header("Tile elements")]
         [SerializeField] private int elementsSpacing = 3;
@@ -22,7 +23,17 @@ namespace GameMap.Generator {
 
         private IEnumerator Start() {
             playerTileGPos = new Vector2Int(tilesNumberDistanceFromPlayer, tilesNumberDistanceFromPlayer);
-           
+
+            int tileID = 0;
+            for (int col = -tilesNumberMaxDistanceFromCenter; col <= tilesNumberMaxDistanceFromCenter; col++)
+            {
+                for (int row = -tilesNumberMaxDistanceFromCenter; row <= tilesNumberMaxDistanceFromCenter; row++)
+                {
+                    DictionaryTileID.SetValue(new Vector2Int(row, col), tileID);
+                    tileID++;
+                }
+            }
+
             ///check save game
             if (MapDataManager.Instance.LoadSaveGame())
                 LoadTilesPositionsAroundPlayer();
