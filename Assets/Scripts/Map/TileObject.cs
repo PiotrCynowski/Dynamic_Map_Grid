@@ -17,9 +17,8 @@ namespace GameMap.Generator
         BoxCollider endMapCollider;
 
         public LayerMask layerMask;
-        Material mapTile;
 
-        public void Init(Vector2Int wPos, TileSettings settings, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos)
+        public void Init(Vector2Int wPos, TileSettings settings, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos, int _endMapValue)
         {
             tileElements = new(settings.tileSize, settings.elementsSpacing, settings.maxElementDensity, tileElementsContainer);
 
@@ -32,15 +31,16 @@ namespace GameMap.Generator
             PlayerIsOnTile = playerColCallback;
             localPos = _localPos.HasValue ? _localPos.Value : new Vector2Int(wPos.x + tFromPlayer, wPos.y + tFromPlayer);
 
+            endMapValue = _endMapValue;
+
             worldPos = wPos;
             playerLocalPos = new Vector2Int(tFromPlayer, tFromPlayer);
             tileSize = settings.tileSize;
             axisTilesNumber = (tFromPlayer * 2) + 1;
             tilesFromCorner = tFromPlayer * 2;
             GetComponentInChildren<MeshFilter>().mesh = tileMesh;
-            mapTile = mat;
             tileElementsContainer.localPosition = new Vector3(-tileSize * 0.5f, 0, -tileSize * 0.5f);
-            tileElements.Init(worldPos, mat, _localPos.HasValue, isEndMapTile());
+            tileElements.Init(worldPos, mat, _localPos.HasValue, IsEndMapTile());
         }
 
         #region moving tiles
@@ -74,7 +74,7 @@ namespace GameMap.Generator
             }
 
             worldPos = playerWorldPos + (localPos - playerLocalPos);
-            tileElements.Refresh(worldPos, isEndMapTile());
+            tileElements.Refresh(worldPos, IsEndMapTile());
         }
 
         private bool IsCorner(Vector2Int moved)
@@ -82,26 +82,18 @@ namespace GameMap.Generator
             return localPos == new Vector2Int(moved.x > 0 ? 0 : tilesFromCorner, moved.y > 0 ? 0 : tilesFromCorner);
         }
 
-        bool isEndMapTile()
+        bool IsEndMapTile()
         {
             if (worldPos.x < -endMapValue || worldPos.x > endMapValue || worldPos.y < -endMapValue || worldPos.y > endMapValue)
             {
                 endMapCollider.enabled = true;
-                SetMaterialTile(false);
                 return true;
             }
             else
             {
                 endMapCollider.enabled = false;
-                SetMaterialTile(true);
                 return false;
             }
-        }
-
-        void SetMaterialTile(bool isTile)
-        {
-            mapTile.SetInt("_tileID", isTile ? DictionaryTileID.GetValue(worldPos) : 0);
-            mapTile.SetInt("_isTile", isTile ? 1 : 0);
         }
 
         void OnTriggerEnter(Collider other)

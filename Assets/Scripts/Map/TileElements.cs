@@ -30,7 +30,10 @@ namespace GameMap.Generator
             }
 
             if (isEndMap)
+            {
+                groundMat.SetTexture("_MainTex", MapDataManager.Instance.GetGroundBlock());
                 return;
+            }
 
             if (worldPos != Vector2Int.zero)
             {
@@ -53,6 +56,7 @@ namespace GameMap.Generator
 
             if (isEndMap)
             {
+                groundMat.SetTexture("_MainTex", MapDataManager.Instance.GetGroundBlock());
                 return;
             }
 

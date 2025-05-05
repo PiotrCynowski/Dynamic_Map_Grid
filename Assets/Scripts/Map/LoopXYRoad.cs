@@ -24,16 +24,6 @@ namespace GameMap.Generator {
         private IEnumerator Start() {
             playerTileGPos = new Vector2Int(tilesNumberDistanceFromPlayer, tilesNumberDistanceFromPlayer);
 
-            int tileID = 0;
-            for (int col = -tilesNumberMaxDistanceFromCenter; col <= tilesNumberMaxDistanceFromCenter; col++)
-            {
-                for (int row = -tilesNumberMaxDistanceFromCenter; row <= tilesNumberMaxDistanceFromCenter; row++)
-                {
-                    DictionaryTileID.SetValue(new Vector2Int(row, col), tileID);
-                    tileID++;
-                }
-            }
-
             ///check save game
             if (MapDataManager.Instance.LoadSaveGame())
                 LoadTilesPositionsAroundPlayer();
@@ -61,7 +51,7 @@ namespace GameMap.Generator {
                 for (int col = -tilesNumberDistanceFromPlayer; col <= tilesNumberDistanceFromPlayer; col++) {
                     tile = Instantiate(Tiles.gameObject, new Vector3(row * tileSize, 0, col * tileSize), Quaternion.identity, gameObject.transform);
                     thisMat = tile.GetComponentInChildren<MeshRenderer>().material = new(mat);
-                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, null);
+                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, null, tilesNumberMaxDistanceFromCenter);
                     tileDatas.Add(tile.GetComponent<TileObject>());
                 }
             }
@@ -87,7 +77,7 @@ namespace GameMap.Generator {
                     
                     tile = Instantiate(Tiles.gameObject, new Vector3(row * tileSettings.tileSize, 0, col * tileSettings.tileSize), Quaternion.identity, gameObject.transform);
                     thisMat = tile.GetComponentInChildren<MeshRenderer>().material = new(mat);
-                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, new Vector2Int(lRow, lCol));
+                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, new Vector2Int(lRow, lCol), tilesNumberMaxDistanceFromCenter);
                     tileDatas.Add(tile.GetComponent<TileObject>());
                 }
             }
