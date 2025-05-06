@@ -69,8 +69,8 @@ namespace GameMap.Generator {
             return (groundID, groundTextures[groundID]);
         }
 
-        public Texture2D GetGroundByID(int ID, bool isEndMap = false) {
-            return isEndMap ? groundTextures[ID] : blockTexture;
+        public Texture2D GetGroundByID(int ID) {
+            return groundTextures[ID];
         }
 
         public Texture2D GetGroundBlock()

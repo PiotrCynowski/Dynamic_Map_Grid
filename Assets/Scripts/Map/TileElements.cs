@@ -63,10 +63,9 @@ namespace GameMap.Generator
             density = Random.Range(0, maxDensity);
 
             if (MapDataManager.Instance.IsTileExist(worldPos))
-            {
                 LoadElements(worldPos);
-            }
-            else GenerateElements(worldPos);
+            else
+                GenerateElements(worldPos);
         }
 
         private void GenerateElements(Vector2Int worldPos)
