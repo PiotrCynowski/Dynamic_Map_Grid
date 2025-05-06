@@ -161,7 +161,7 @@ namespace GameMap.Generator {
         #region Load Game File
         public bool LoadSaveGame() {
             if (!File.Exists(filePath)) {
-                return false;
+                return true;
             }
             
             string json = File.ReadAllText(filePath);
@@ -177,7 +177,7 @@ namespace GameMap.Generator {
             playerWorldPosition = deserializedData.playerWorldPosition;
             playerPosition = deserializedData.playerPosition;
 
-            return true;
+            return false;
         }
         #endregion
     }

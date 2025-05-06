@@ -22,8 +22,11 @@ namespace GameMap.Generator
         {
             tileElements = new(settings.tileSize, settings.elementsSpacing, settings.maxElementDensity, tileElementsContainer);
 
-            GetComponents<BoxCollider>()[0].size = new Vector3(settings.tileSize * 0.5f, 0.05f, settings.tileSize);
-            GetComponents<BoxCollider>()[1].size = new Vector3(settings.tileSize, 0.05f, settings.tileSize * 0.5f);
+            gameObject.AddComponent<BoxCollider>().size = new Vector3(settings.tileSize * 0.5f, 0.05f, settings.tileSize);
+            gameObject.AddComponent<BoxCollider>().size = new Vector3(settings.tileSize, 0.05f, settings.tileSize * 0.5f);
+
+            //GetComponents<BoxCollider>()[0].size = new Vector3(settings.tileSize * 0.5f, 0.05f, settings.tileSize);
+            //GetComponents<BoxCollider>()[1].size = new Vector3(settings.tileSize, 0.05f, settings.tileSize * 0.5f);
 
             endMapCollider = GetComponentsInChildren<BoxCollider>()[2];
             endMapCollider.size = new Vector3(settings.tileSize, 0.5f, settings.tileSize);
