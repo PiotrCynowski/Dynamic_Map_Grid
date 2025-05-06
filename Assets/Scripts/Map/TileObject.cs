@@ -5,21 +5,24 @@ namespace GameMap.Generator
 {
     public class TileObject : MonoBehaviour
     {
-        [SerializeField] private Transform tileElementsContainer;
+        private Transform tileElementsContainer;
         private TileElements tileElements;
 
-        public Vector2Int localPos, worldPos;
+        public Vector2Int localPos;
         private Action<Vector2Int> PlayerIsOnTile = delegate { };
-        private Vector2Int playerLocalPos;
+        private Vector2Int worldPos, playerLocalPos;
         private int endMapValue;
         private int tileSize, axisTilesNumber, tilesFromCorner;
 
-        BoxCollider endMapCollider;
+        private BoxCollider endMapCollider;
 
-        public LayerMask layerMask;
+        private LayerMask layerMask;
 
-        public void Init(Vector2Int wPos, TileSettings settings, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos, int _endMapValue)
+        public void Init(Vector2Int wPos, TileSettings settings, int tFromPlayer, Mesh tileMesh, Action<Vector2Int> playerColCallback, Material mat, Vector2Int? _localPos, int _endMapValue, LayerMask layerMask)
         {
+            tileElementsContainer = new GameObject("elementsContainer").transform;
+            tileElementsContainer.transform.parent = this.transform;
+
             tileElements = new(settings.tileSize, settings.elementsSpacing, settings.maxElementDensity, tileElementsContainer);
 
             BoxCollider collider1 = gameObject.AddComponent<BoxCollider>();
@@ -35,6 +38,7 @@ namespace GameMap.Generator
             localPos = _localPos.HasValue ? _localPos.Value : new Vector2Int(wPos.x + tFromPlayer, wPos.y + tFromPlayer);
 
             endMapValue = _endMapValue;
+            this.layerMask = layerMask;
 
             worldPos = wPos;
             playerLocalPos = new Vector2Int(tFromPlayer, tFromPlayer);

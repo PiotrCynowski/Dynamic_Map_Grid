@@ -11,6 +11,7 @@ namespace GameMap.Generator
         [SerializeField] private int tileSize;
         [SerializeField] private int tilesNumberDistanceFromPlayer;
         [SerializeField] private int tilesNumberMaxDistanceFromCenter;
+        [SerializeField] private LayerMask layerMaskForPlayer;
 
         [Header("Tile elements")]
         [SerializeField] private int elementsSpacing = 3;
@@ -62,7 +63,7 @@ namespace GameMap.Generator
                 {
                     tile = Instantiate(Tiles.gameObject, new Vector3(row * tileSize, 0, col * tileSize), Quaternion.identity, gameObject.transform);
                     thisMat = tile.GetComponentInChildren<MeshRenderer>().material = new(mat);
-                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, null, tilesNumberMaxDistanceFromCenter);
+                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, null, tilesNumberMaxDistanceFromCenter, layerMaskForPlayer);
                     tileDatas.Add(tile.GetComponent<TileObject>());
                 }
             }
@@ -87,7 +88,7 @@ namespace GameMap.Generator
                 {
                     tile = Instantiate(Tiles.gameObject, new Vector3(row * tileSettings.tileSize, 0, col * tileSettings.tileSize), Quaternion.identity, gameObject.transform);
                     thisMat = tile.GetComponentInChildren<MeshRenderer>().material = new(mat);
-                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, new Vector2Int(lRow, lCol), tilesNumberMaxDistanceFromCenter);
+                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, new Vector2Int(lRow, lCol), tilesNumberMaxDistanceFromCenter, layerMaskForPlayer);
                     tileDatas.Add(tile.GetComponent<TileObject>());
                 }
             }
