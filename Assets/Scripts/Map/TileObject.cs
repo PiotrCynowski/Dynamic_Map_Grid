@@ -85,7 +85,7 @@ namespace GameMap.Generator
             return localPos == new Vector2Int(moved.x > 0 ? 0 : tilesFromCorner, moved.y > 0 ? 0 : tilesFromCorner);
         }
 
-        bool IsEndMapTile()
+        private bool IsEndMapTile()
         {
             if (worldPos.x < -endMapValue || worldPos.x > endMapValue || worldPos.y < -endMapValue || worldPos.y > endMapValue)
             {
@@ -99,7 +99,7 @@ namespace GameMap.Generator
             }
         }
 
-        void OnTriggerEnter(Collider other)
+        private void OnTriggerEnter(Collider other)
         {
             if (((1 << other.gameObject.layer) & layerMask.value) == 0)
             {

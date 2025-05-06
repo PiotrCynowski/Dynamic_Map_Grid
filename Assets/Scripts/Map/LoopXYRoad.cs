@@ -66,7 +66,6 @@ namespace GameMap.Generator
                     tileDatas.Add(tile.GetComponent<TileObject>());
                 }
             }
-            //MapDataManager.Instance.PreparePlayer(true);
         }
 
         public void LoadTilesPositionsAroundPlayer()
@@ -92,8 +91,6 @@ namespace GameMap.Generator
                     tileDatas.Add(tile.GetComponent<TileObject>());
                 }
             }
-
-            //MapDataManager.Instance.PreparePlayer(false);
         }
 
         ///Callback for when the player stands on a new tile
