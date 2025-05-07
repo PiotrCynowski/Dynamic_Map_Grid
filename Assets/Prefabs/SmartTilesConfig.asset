@@ -13,6 +13,17 @@ MonoBehaviour:
   m_Name: SmartTilesConfig
   m_EditorClassIdentifier: 
   Config:
-    groundTextures: []
-    blockTexture: {fileID: 0}
-    tileElements: []
+    groundTextures:
+    - {fileID: 2800000, guid: 358df129f008e97428e4a63b64dfc96d, type: 3}
+    - {fileID: 2800000, guid: e2c88751686dfb74e9e62d31bf1450e3, type: 3}
+    - {fileID: 2800000, guid: 3a31013cbddb8f347b47553a8b9f6d4f, type: 3}
+    - {fileID: 2800000, guid: 15a2415e4acf77b4aba7fa496ef1c98c, type: 3}
+    - {fileID: 2800000, guid: 45d13c5e2471d8141ad621364f51003a, type: 3}
+    - {fileID: 2800000, guid: 2569abe52e193d443a4d1c0f440d589c, type: 3}
+    - {fileID: 2800000, guid: 7e45fdbacb0f57646840e491116427dd, type: 3}
+    - {fileID: 2800000, guid: 30ecd0d9dfd9a534ca07eca9d7593a0b, type: 3}
+    blockTexture: {fileID: 10309, guid: 0000000000000000f000000000000000, type: 0}
+    tileElements:
+    - {fileID: 5876282692966788824, guid: 357c6a5069ed8f141b883a35bf0f7b56, type: 3}
+    - {fileID: 5469541328822006628, guid: ed6bf9cb4c08c454faefce1b82114a47, type: 3}
+    - {fileID: 1379675368666560279, guid: 2a94fe6c7a4b6044b9f03d9ee164651f, type: 3}
