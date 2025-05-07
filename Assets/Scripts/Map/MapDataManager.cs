@@ -1,6 +1,4 @@
 using PoolSpawner;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 namespace GameMap.Generator
@@ -17,22 +15,8 @@ namespace GameMap.Generator
         [SerializeField] GameObject[] mapElements;
         public SpawnWithPool poolMapElements { get; private set; }
 
-        private Transform _player;
-        public Transform Player
-        {
-            get
-            {
-                if (_player == null)
-                {
-                    _player = GameObject.FindGameObjectWithTag("Player").transform;
-                }
-                return _player;
-            }
-        }
-        private Vector3 playerPosition;
-        private Vector2Int playerWorldPosition;
-
-        private SaveLoad saveLoad;
+       
+        public SaveLoad saveLoad;
 
         private void Awake()
         {
@@ -65,7 +49,7 @@ namespace GameMap.Generator
 
         private void UpdatePlayerWPos(Vector2Int wPos)
         {
-            playerWorldPosition = wPos;
+            saveLoad.playerWorldPosition = wPos;
         }
 
         private void OnApplicationQuit()

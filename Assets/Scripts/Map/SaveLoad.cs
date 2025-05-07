@@ -7,6 +7,20 @@ public class SaveLoad
     private Dictionary<Vector2, TileData> dataTileList = new();
     private string filePath;
     private TileSettings tileSettings;
+    private Transform _player;
+    public Transform Player
+    {
+        get
+        {
+            if (_player == null)
+            {
+                _player = GameObject.FindGameObjectWithTag("Player").transform;
+            }
+            return _player;
+        }
+    }
+    private Vector3 playerPosition;
+    public Vector2Int playerWorldPosition;
 
     public SaveLoad()
     {

@@ -29,9 +29,9 @@ namespace GameMap.Generator
         {
             playerTileGPos = new Vector2Int(tilesNumberDistanceFromPlayer, tilesNumberDistanceFromPlayer);
 
-            bool isNewGame = MapDataManager.Instance.LoadSaveGame();
+            bool isNewGame = MapDataManager.Instance.saveLoad.LoadSaveGame();
             PrepareTilesAroundPlayer(isNewGame);
-            MapDataManager.Instance.PreparePlayer(isNewGame);
+            MapDataManager.Instance.saveLoad.PreparePlayer(isNewGame);
 
             yield return null;
         }
@@ -39,14 +39,12 @@ namespace GameMap.Generator
         #region structure tiles position around player
         public void PrepareTilesAroundPlayer(bool isNewGame)
         {
-            if(isNewGame)
-                playerTileWorldPos = Vector2Int.zero;
-
+            playerTileWorldPos = isNewGame ? Vector2Int.zero : MapDataManager.Instance.saveLoad.LoadPlayerWPos();
             Mesh tileMesh = new TileGenerator().GetNewTile(tileSize);
             TileSettings tileSettings = new(tileSize, elementsSpacing, maxElementsDensity);
-            MapDataManager.Instance.PrepareTileSettings(tileSettings);
+            MapDataManager.Instance.saveLoad.PrepareTileSettings(tileSettings);
 
-            GenerateTiles(center: isNewGame ? Vector2Int.zero : MapDataManager.Instance.LoadPlayerWPos(), tileSettings: tileSettings, tileMesh: tileMesh, useSavedPositions: !isNewGame);
+            GenerateTiles(center: playerTileWorldPos, tileSettings: tileSettings, tileMesh: tileMesh, useSavedPositions: !isNewGame);
         }
 
         private void GenerateTiles(Vector2Int center, TileSettings tileSettings, Mesh tileMesh, bool useSavedPositions)

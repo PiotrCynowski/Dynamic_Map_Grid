@@ -62,7 +62,7 @@ namespace GameMap.Generator
 
             density = Random.Range(0, maxDensity);
 
-            if (MapDataManager.Instance.IsTileExist(worldPos))
+            if (MapDataManager.Instance.saveLoad.IsTileExist(worldPos))
                 LoadElements(worldPos);
             else
                 GenerateElements(worldPos);
@@ -93,12 +93,12 @@ namespace GameMap.Generator
 
             (int gID, Texture2D ground) = MapDataManager.Instance.GetRndGround();
             groundMat.SetTexture("_MainTex", ground);
-            MapDataManager.Instance.AddTileData(worldPos, tileElements.ToArray(), gID);
+            MapDataManager.Instance.saveLoad.AddTileData(worldPos, tileElements.ToArray(), gID);
         }
 
         private void LoadElements(Vector2Int worldPos)
         {
-            (Vector3[] tileData, int groundID) = MapDataManager.Instance.GetTileData(worldPos);
+            (Vector3[] tileData, int groundID) = MapDataManager.Instance.saveLoad.GetTileData(worldPos);
             GameObject newElement;
             int objID;
 
