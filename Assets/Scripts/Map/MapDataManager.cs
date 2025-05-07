@@ -14,8 +14,7 @@ namespace GameMap.Generator
         [Header("Pool Elements")]
         [SerializeField] GameObject[] mapElements;
         public SpawnWithPool poolMapElements { get; private set; }
-
-       
+      
         public SaveLoad saveLoad;
 
         private void Awake()
@@ -32,7 +31,6 @@ namespace GameMap.Generator
             LoopXYRoad.OnPlayerWPosUpdate += UpdatePlayerWPos;
 
             saveLoad = new SaveLoad();
-
 
             AddObjectPool();
             groundTexLen = groundTextures.Length;
