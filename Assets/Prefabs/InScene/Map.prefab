@@ -44,8 +44,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 000e8e3b36da12048ae6f36d343b6c5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Tiles: {fileID: 2193625449732693592, guid: 8a0741f6bcf44fb4a9cc96c2dcf3acc4, type: 3}
   tileSize: 15
   tilesNumberDistanceFromPlayer: 2
+  tilesNumberMaxDistanceFromCenter: 3
+  layerMaskForPlayer:
+    serializedVersion: 2
+    m_Bits: 256
+  layerMaskForTiles:
+    serializedVersion: 2
+    m_Bits: 64
+  tileMat: {fileID: 2100000, guid: b47dd04a8f66888479d5df01a5e7d2d8, type: 2}
   elementsSpacing: 3
   maxElementsDensity: 50
