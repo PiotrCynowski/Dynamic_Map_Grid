@@ -554,6 +554,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5754730967954257787, guid: 2184d3689a74d894fa21fd76d7618c93, type: 3}
+      propertyPath: layerMaskForPlayer.m_Bits
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 5754730967954257787, guid: 2184d3689a74d894fa21fd76d7618c93, type: 3}
       propertyPath: tilesNumberMaxDistanceFromCenter
       value: 3
       objectReference: {fileID: 0}

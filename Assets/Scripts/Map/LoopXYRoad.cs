@@ -7,11 +7,12 @@ namespace GameMap.Generator
     public class LoopXYRoad : MonoBehaviour
     {
         [Header("Tiles")]
-        [SerializeField] private TileObject Tiles;
         [SerializeField] private int tileSize;
         [SerializeField] private int tilesNumberDistanceFromPlayer;
         [SerializeField] private int tilesNumberMaxDistanceFromCenter;
         [SerializeField] private LayerMask layerMaskForPlayer;
+        [SerializeField] private LayerMask layerMaskForTiles;
+        [SerializeField] private Material tileMat;
 
         [Header("Tile elements")]
         [SerializeField] private int elementsSpacing = 3;
@@ -52,7 +53,6 @@ namespace GameMap.Generator
             TileSettings tileSettings = new(tileSize, elementsSpacing, maxElementsDensity);
             MapDataManager.Instance.PrepareTileSettings(tileSettings);
 
-            Material mat = Tiles.GetComponentInChildren<MeshRenderer>().sharedMaterial;
             Material thisMat;
             GameObject tile;
             tileDatas = new();
@@ -61,9 +61,22 @@ namespace GameMap.Generator
             {
                 for (int col = -tilesNumberDistanceFromPlayer; col <= tilesNumberDistanceFromPlayer; col++)
                 {
-                    tile = Instantiate(Tiles.gameObject, new Vector3(row * tileSize, 0, col * tileSize), Quaternion.identity, gameObject.transform);
-                    thisMat = tile.GetComponentInChildren<MeshRenderer>().material = new(mat);
-                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, null, tilesNumberMaxDistanceFromCenter, layerMaskForPlayer);
+                    tile = new GameObject("Tile");
+                    tile.transform.parent = gameObject.transform;
+                    tile.transform.position = new Vector3(row * tileSettings.tileSize, 0, col * tileSettings.tileSize);
+
+                    int maskValue = layerMaskForTiles.value;
+                    if ((maskValue & (maskValue - 1)) == 0 && maskValue != 0)
+                    {
+                        tile.layer = (int)Mathf.Log(maskValue, 2);
+                    }
+                    else
+                    {
+                        Debug.LogError("layerMaskForTiles must contain exactly one layer.");
+                    }
+
+                    thisMat = new(tileMat);
+                    tile.AddComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, null, tilesNumberMaxDistanceFromCenter, layerMaskForPlayer);
                     tileDatas.Add(tile.GetComponent<TileObject>());
                 }
             }
@@ -77,7 +90,6 @@ namespace GameMap.Generator
             TileGenerator tileGenerator = new();
             Mesh tileMesh = tileGenerator.GetNewTile(tileSettings.tileSize);
 
-            Material mat = Tiles.GetComponentInChildren<MeshRenderer>().sharedMaterial;
             Material thisMat;
             GameObject tile;
             tileDatas = new();
@@ -86,9 +98,22 @@ namespace GameMap.Generator
             {
                 for (int col = playerTileWorldPos.y - tilesNumberDistanceFromPlayer, lCol = 0; col <= playerTileWorldPos.y + tilesNumberDistanceFromPlayer; col++, lCol++)
                 {
-                    tile = Instantiate(Tiles.gameObject, new Vector3(row * tileSettings.tileSize, 0, col * tileSettings.tileSize), Quaternion.identity, gameObject.transform);
-                    thisMat = tile.GetComponentInChildren<MeshRenderer>().material = new(mat);
-                    tile.GetComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, new Vector2Int(lRow, lCol), tilesNumberMaxDistanceFromCenter, layerMaskForPlayer);
+                    tile = new GameObject("Tile");
+                    tile.transform.parent = gameObject.transform;
+                    tile.transform.position = new Vector3(row * tileSettings.tileSize, 0, col * tileSettings.tileSize);
+
+                    int maskValue = layerMaskForTiles.value;
+                    if ((maskValue & (maskValue - 1)) == 0 && maskValue != 0)
+                    {
+                        tile.layer = (int)Mathf.Log(maskValue, 2);
+                    }
+                    else
+                    {
+                        Debug.LogError("layerMaskForTiles must contain exactly one layer.");
+                    }
+
+                    thisMat = new(tileMat);
+                    tile.AddComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, new Vector2Int(lRow, lCol), tilesNumberMaxDistanceFromCenter, layerMaskForPlayer);
                     tileDatas.Add(tile.GetComponent<TileObject>());
                 }
             }

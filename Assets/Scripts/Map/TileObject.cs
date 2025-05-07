@@ -45,7 +45,8 @@ namespace GameMap.Generator
             tileSize = settings.tileSize;
             axisTilesNumber = (tFromPlayer * 2) + 1;
             tilesFromCorner = tFromPlayer * 2;
-            GetComponentInChildren<MeshFilter>().mesh = tileMesh;
+            gameObject.AddComponent<MeshFilter>().mesh = tileMesh;
+            gameObject.AddComponent<MeshRenderer>().material = mat;
             tileElementsContainer.localPosition = new Vector3(-tileSize * 0.5f, 0, -tileSize * 0.5f);
             tileElements.Init(worldPos, mat, _localPos.HasValue, IsEndMapTile());
         }
