@@ -103,10 +103,7 @@ namespace GameMap.Generator
 
             for (int i = 0; i < tileDatas.Count; i++)
             {
-
-                isInPlayerRange = Mathf.Abs(tileDatas[i].localPos.x - gPos.x) <= tilesNumberDistanceFromPlayer
-                           && Mathf.Abs(tileDatas[i].localPos.y - gPos.y) <= tilesNumberDistanceFromPlayer;
-
+                isInPlayerRange = Mathf.Abs(tileDatas[i].localPos.x - gPos.x) <= tilesNumberDistanceFromPlayer && Mathf.Abs(tileDatas[i].localPos.y - gPos.y) <= tilesNumberDistanceFromPlayer;
                 tileDatas[i].MoveTiles(movedBy, playerTileWorldPos, isInPlayerRange);
             }
         }
