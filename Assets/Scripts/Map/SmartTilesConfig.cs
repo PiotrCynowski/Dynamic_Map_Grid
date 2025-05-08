@@ -17,20 +17,20 @@ namespace SmartTiles
     public class TilesConfig
     {
         [Header("Tile Ground")]
-        [SerializeField] private Texture2D[] groundTextures;
-        [SerializeField] private Texture2D blockTexture;
+        public Texture2D[] groundTextures;
+        public Texture2D blockTexture;
         [Header("Tile Elements")]
-        [SerializeField] private GameObject[] tileElements;
-        [SerializeField] private int elementsSpacing = 3;
-        [SerializeField] private int maxElementsDensity = 50;
+        public GameObject[] tileElements;
+        public int elementsSpacing = 3;
+        public int maxElementsDensity = 50;
         [Header("Tile Layers")]
-        [SerializeField] private LayerMask layerMaskForPlayer;
-        [SerializeField] private LayerMask layerMaskForTiles;
+        public LayerMask layerMaskForPlayer;
+        public LayerMask layerMaskForTiles;
         [Header("Tiles")]
-        [SerializeField] private int tileSize;
-        [SerializeField] private int tilesNumberDistanceFromPlayer;
-        [SerializeField] private int tilesNumberMaxDistanceFromCenter;
-        [SerializeField] private Material tileMat;
+        public int tileSize;
+        public int tilesNumberDistanceFromPlayer;
+        public int tilesNumberMaxDistanceFromCenter;
+        public Material tileMat;
 
         public TilesConfig(Texture2D[] groundTextures, Texture2D blockTexture, GameObject[] tileElements)
         {

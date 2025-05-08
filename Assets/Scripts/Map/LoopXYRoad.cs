@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,21 +5,10 @@ namespace SmartTiles
 {
     public class LoopXYRoad : MonoBehaviour
     {
-        [Header("Tiles")]
-        [SerializeField] private int tileSize;
-        [SerializeField] private int tilesNumberDistanceFromPlayer;
-        [SerializeField] private int tilesNumberMaxDistanceFromCenter;
-        [SerializeField] private LayerMask layerMaskForPlayer;
-        [SerializeField] private LayerMask layerMaskForTiles;
-        [SerializeField] private Material tileMat;
-
-        [Header("Tile elements")]
-        [SerializeField] private int elementsSpacing = 3;
-        [SerializeField] private int maxElementsDensity = 50;
+        private int tilesNumberDistanceFromPlayer;
 
         private List<TileObject> tileDatas;
-        private Vector2Int playerTileGPos, playerTileWorldPos, movedBy; //lastGPos;
-        private bool isInPlayerRange;
+        private Vector2Int playerTileGPos, playerTileWorldPos;
 
         public delegate void playerWPosUpdated(Vector2Int wPos);
         public static event playerWPosUpdated OnPlayerWPosUpdate;
@@ -35,28 +23,57 @@ namespace SmartTiles
                 Instance = this;
         }
 
-        public void PrepareTiles()
+        private void GenerateTiles(SmartTilesConfig config)
         {
-            StartCoroutine(PrepareTilesRoutine());
+            TileGenerator tileGenerator = new TileGenerator(config);
+            tileGenerator.PrepareTiles();
         }
 
-        private IEnumerator PrepareTilesRoutine()
+        ///Callback for when the player stands on a new tile
+        private void PlayerStandsOnTile(Vector2Int gPos)
         {
-            playerTileGPos = new Vector2Int(tilesNumberDistanceFromPlayer, tilesNumberDistanceFromPlayer);
+            if (playerTileGPos == gPos)
+            {
+                return;
+            }
+
+            Vector2Int movedBy = new Vector2Int(gPos.x - playerTileGPos.x, gPos.y - playerTileGPos.y);
+            playerTileWorldPos += movedBy;
+            OnPlayerWPosUpdate(playerTileWorldPos);
+
+            for (int i = 0; i < tileDatas.Count; i++)
+            {
+                bool isInPlayerRange = Mathf.Abs(tileDatas[i].localPos.x - gPos.x) <= tilesNumberDistanceFromPlayer && Mathf.Abs(tileDatas[i].localPos.y - gPos.y) <= tilesNumberDistanceFromPlayer;
+                tileDatas[i].MoveTiles(movedBy, playerTileWorldPos, isInPlayerRange);
+            }
+        }
+    }
+
+    public class TileGenerator
+    {
+        private List<TileObject> tileDatas;
+        private Vector2Int playerTileGPos, playerTileWorldPos;
+        private TilesConfig config;
+
+        public TileGenerator(TilesConfig config)
+        {
+            this.config = config;
+        }
+
+        public void PrepareTiles()
+        {
+            playerTileGPos = new Vector2Int(config.tilesNumberDistanceFromPlayer, config.tilesNumberDistanceFromPlayer);
 
             bool isNewGame = MapDataManager.Instance.saveLoad.LoadSaveGame();
             PrepareTilesAroundPlayer(isNewGame);
             MapDataManager.Instance.saveLoad.PreparePlayer(isNewGame);
-
-            yield return null;
         }
 
-        #region structure tiles position around player
         private void PrepareTilesAroundPlayer(bool isNewGame)
         {
             playerTileWorldPos = isNewGame ? Vector2Int.zero : MapDataManager.Instance.saveLoad.LoadPlayerWPos();
-            Mesh tileMesh = new TileGenerator().GetNewTile(tileSize);
-            TileSettings tileSettings = new(tileSize, elementsSpacing, maxElementsDensity);
+            Mesh tileMesh = GetNewTile(config.tileSize);
+            TileSettings tileSettings = new(config.tileSize, config.elementsSpacing, config.maxElementsDensity);
             MapDataManager.Instance.saveLoad.PrepareTileSettings(tileSettings);
 
             GenerateTiles(center: playerTileWorldPos, tileSettings: tileSettings, tileMesh: tileMesh, useSavedPositions: !isNewGame);
@@ -66,9 +83,9 @@ namespace SmartTiles
         {
             tileDatas = new();
 
-            for (int row = center.x - tilesNumberDistanceFromPlayer, lRow = 0; row <= center.x + tilesNumberDistanceFromPlayer; row++, lRow++)
+            for (int row = center.x - config.tilesNumberDistanceFromPlayer, lRow = 0; row <= center.x + config.tilesNumberDistanceFromPlayer; row++, lRow++)
             {
-                for (int col = center.y - tilesNumberDistanceFromPlayer, lCol = 0; col <= center.y + tilesNumberDistanceFromPlayer; col++, lCol++)
+                for (int col = center.y - config.tilesNumberDistanceFromPlayer, lCol = 0; col <= center.y + config.tilesNumberDistanceFromPlayer; col++, lCol++)
                 {
                     GameObject tile = new("Tile");
                     tile.transform.parent = gameObject.transform;
@@ -77,10 +94,10 @@ namespace SmartTiles
                     if (!SetTileLayer(tile))
                         return;
 
-                    Material thisMat = new(tileMat);
+                    Material thisMat = new(config.tileMat);
                     Vector2Int? localCoords = useSavedPositions ? new Vector2Int(lRow, lCol) : null;
 
-                    tile.AddComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, localCoords, tilesNumberMaxDistanceFromCenter, layerMaskForPlayer);
+                    tile.AddComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, config.tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, localCoords, config.tilesNumberMaxDistanceFromCenter, config.layerMaskForPlayer);
 
                     tileDatas.Add(tile.GetComponent<TileObject>());
                 }
@@ -89,7 +106,7 @@ namespace SmartTiles
 
         private bool SetTileLayer(GameObject tile)
         {
-            int maskValue = layerMaskForTiles.value;
+            int maskValue = config.layerMaskForTiles.value;
             if ((maskValue & (maskValue - 1)) == 0 && maskValue != 0)
             {
                 tile.layer = (int)Mathf.Log(maskValue, 2);
@@ -102,29 +119,6 @@ namespace SmartTiles
             }
         }
 
-        ///Callback for when the player stands on a new tile
-        private void PlayerStandsOnTile(Vector2Int gPos)
-        {
-            if (playerTileGPos == gPos)
-            {
-                return;
-            }
-
-            movedBy = new Vector2Int(gPos.x - playerTileGPos.x, gPos.y - playerTileGPos.y);
-            playerTileWorldPos += movedBy;
-            OnPlayerWPosUpdate(playerTileWorldPos);
-
-            for (int i = 0; i < tileDatas.Count; i++)
-            {
-                isInPlayerRange = Mathf.Abs(tileDatas[i].localPos.x - gPos.x) <= tilesNumberDistanceFromPlayer && Mathf.Abs(tileDatas[i].localPos.y - gPos.y) <= tilesNumberDistanceFromPlayer;
-                tileDatas[i].MoveTiles(movedBy, playerTileWorldPos, isInPlayerRange);
-            }
-        }
-        #endregion
-    }
-
-    public class TileGenerator
-    {
         public Mesh GetNewTile(float tileSize)
         {
             Mesh mesh = new();
