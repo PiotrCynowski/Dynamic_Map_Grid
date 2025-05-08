@@ -14,14 +14,34 @@ namespace SmartTiles
         public delegate void playerWPosUpdated(Vector2Int wPos);
         public static event playerWPosUpdated OnPlayerWPosUpdate;
 
-        public static LoopXYRoad Instance { get; private set; }
+        public static LoopXYRoad instance { get; private set; }
+        public static LoopXYRoad Instance
+        {
+            get
+            {
+                if (instance == null)
+                {
+                    instance = FindObjectOfType<LoopXYRoad>();
+                    if (instance == null)
+                    {
+                        GameObject singletonObj = new GameObject("LoopXYRoad");
+                        instance = singletonObj.AddComponent<LoopXYRoad>();
+                        DontDestroyOnLoad(singletonObj);
+                    }
+                }
 
+                return instance;
+            }
+        }
         private void Awake()
         {
-            if (Instance != null && Instance != this)
+            if (instance != null && instance != this)
                 Destroy(this);
             else
-                Instance = this;
+            {
+                instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
         }
 
         public void GenerateTiles(TilesConfig config)
