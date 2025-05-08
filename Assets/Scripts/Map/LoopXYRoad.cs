@@ -7,7 +7,6 @@ namespace SmartTiles
     public class LoopXYRoad : MonoBehaviour
     {
         private int tilesNumberDistanceFromPlayer;
-
         private List<TileObject> tileDatas;
         private Vector2Int playerTileGPos, playerTileWorldPos;
 
@@ -46,8 +45,13 @@ namespace SmartTiles
 
         public void GenerateTiles(TilesConfig config)
         {
+            tilesNumberDistanceFromPlayer = config.tilesNumberDistanceFromPlayer;
+            playerTileGPos = new Vector2Int(config.tilesNumberDistanceFromPlayer, config.tilesNumberDistanceFromPlayer);
+
             TileGenerator tileGenerator = new TileGenerator(config, PlayerStandsOnTile);
-            tileGenerator.PrepareTiles();
+            (Vector2Int playerCenter, List<TileObject> tiles)  = tileGenerator.PrepareTiles();
+            playerTileWorldPos = playerCenter;
+            tileDatas = tiles;
         }
 
         ///Callback for when the player stands on a new tile
@@ -73,7 +77,7 @@ namespace SmartTiles
     public class TileGenerator
     {
         private List<TileObject> tileDatas;
-        private Vector2Int playerTileGPos, playerTileWorldPos;
+        private Vector2Int playerTileWorldPos;
         private readonly TilesConfig config;
         private Action<Vector2Int> onPlayerStandsOnTile;
 
@@ -83,26 +87,24 @@ namespace SmartTiles
             this.onPlayerStandsOnTile = onPlayerStandsOnTile;
         }
 
-        public void PrepareTiles()
+        public (Vector2Int playerCenter, List<TileObject> tiles) PrepareTiles()
         {
-            playerTileGPos = new Vector2Int(config.tilesNumberDistanceFromPlayer, config.tilesNumberDistanceFromPlayer);
-
-            bool isNewGame = MapDataManager.Instance.saveLoad.LoadSaveGame();
-            PrepareTilesAroundPlayer(isNewGame);
+            bool isNewGame = MapDataManager.Instance.saveLoad.LoadSaveGame();           
             MapDataManager.Instance.saveLoad.PreparePlayer(isNewGame);
+            return PrepareTilesAroundPlayer(isNewGame);
         }
 
-        private void PrepareTilesAroundPlayer(bool isNewGame)
+        private (Vector2Int playerCenter, List<TileObject> tiles) PrepareTilesAroundPlayer(bool isNewGame)
         {
             playerTileWorldPos = isNewGame ? Vector2Int.zero : MapDataManager.Instance.saveLoad.LoadPlayerWPos();
             Mesh tileMesh = GetNewTile(config.tileSize);
             TileSettings tileSettings = new(config.tileSize, config.elementsSpacing, config.maxElementsDensity);
             MapDataManager.Instance.saveLoad.PrepareTileSettings(tileSettings);
 
-            GenerateTiles(center: playerTileWorldPos, tileSettings: tileSettings, tileMesh: tileMesh, useSavedPositions: !isNewGame);
+            return (playerTileWorldPos, GenerateTiles(center: playerTileWorldPos, tileSettings: tileSettings, tileMesh: tileMesh, useSavedPositions: !isNewGame));
         }
 
-        private void GenerateTiles(Vector2Int center, TileSettings tileSettings, Mesh tileMesh, bool useSavedPositions)
+        private List<TileObject> GenerateTiles(Vector2Int center, TileSettings tileSettings, Mesh tileMesh, bool useSavedPositions)
         {
             tileDatas = new();
 
@@ -115,7 +117,7 @@ namespace SmartTiles
                     tile.transform.position = new Vector3(row * tileSettings.tileSize, 0, col * tileSettings.tileSize);
 
                     if (!SetTileLayer(tile))
-                        return;
+                        return null;
 
                     Material thisMat = new(config.tileMat);
                     Vector2Int? localCoords = useSavedPositions ? new Vector2Int(lRow, lCol) : null;
@@ -125,6 +127,7 @@ namespace SmartTiles
                     tileDatas.Add(tile.GetComponent<TileObject>());
                 }
             }
+            return tileDatas;
         }
 
         private bool SetTileLayer(GameObject tile)
