@@ -25,7 +25,22 @@ namespace SmartTiles
         public delegate void playerWPosUpdated(Vector2Int wPos);
         public static event playerWPosUpdated OnPlayerWPosUpdate;
 
-        private IEnumerator Start()
+        public static LoopXYRoad Instance { get; private set; }
+
+        public void Awake()
+        {
+            if (Instance != null && Instance != this)
+                Destroy(this);
+            else
+                Instance = this;
+        }
+
+        public void PrepareTiles()
+        {
+            StartCoroutine(PrepareTilesRoutine());
+        }
+
+        private IEnumerator PrepareTilesRoutine()
         {
             playerTileGPos = new Vector2Int(tilesNumberDistanceFromPlayer, tilesNumberDistanceFromPlayer);
 
@@ -37,7 +52,7 @@ namespace SmartTiles
         }
 
         #region structure tiles position around player
-        public void PrepareTilesAroundPlayer(bool isNewGame)
+        private void PrepareTilesAroundPlayer(bool isNewGame)
         {
             playerTileWorldPos = isNewGame ? Vector2Int.zero : MapDataManager.Instance.saveLoad.LoadPlayerWPos();
             Mesh tileMesh = new TileGenerator().GetNewTile(tileSize);

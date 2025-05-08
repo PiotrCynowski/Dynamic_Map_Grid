@@ -1,18 +1,12 @@
-using System.Collections;
-using System.Collections.Generic;
+using SmartTiles;
 using UnityEngine;
 
 public class SmartTiles_Tester : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public SmartTilesConfig tilesConfig;
 
-    // Update is called once per frame
-    void Update()
+    public void Start()
     {
-        
+        LoopXYRoad.Instance.PrepareTiles();
     }
 }
