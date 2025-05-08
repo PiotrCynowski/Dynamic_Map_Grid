@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,9 +24,9 @@ namespace SmartTiles
                 Instance = this;
         }
 
-        private void GenerateTiles(SmartTilesConfig config)
+        private void GenerateTiles(TilesConfig config)
         {
-            TileGenerator tileGenerator = new TileGenerator(config);
+            TileGenerator tileGenerator = new TileGenerator(config, PlayerStandsOnTile);
             tileGenerator.PrepareTiles();
         }
 
@@ -53,11 +54,13 @@ namespace SmartTiles
     {
         private List<TileObject> tileDatas;
         private Vector2Int playerTileGPos, playerTileWorldPos;
-        private TilesConfig config;
+        private readonly TilesConfig config;
+        private Action<Vector2Int> onPlayerStandsOnTile;
 
-        public TileGenerator(TilesConfig config)
+        public TileGenerator(TilesConfig config, Action<Vector2Int> onPlayerStandsOnTile)
         {
             this.config = config;
+            this.onPlayerStandsOnTile = onPlayerStandsOnTile;
         }
 
         public void PrepareTiles()
@@ -88,7 +91,7 @@ namespace SmartTiles
                 for (int col = center.y - config.tilesNumberDistanceFromPlayer, lCol = 0; col <= center.y + config.tilesNumberDistanceFromPlayer; col++, lCol++)
                 {
                     GameObject tile = new("Tile");
-                    tile.transform.parent = gameObject.transform;
+                    tile.transform.parent = LoopXYRoad.Instance.gameObject.transform;
                     tile.transform.position = new Vector3(row * tileSettings.tileSize, 0, col * tileSettings.tileSize);
 
                     if (!SetTileLayer(tile))
@@ -119,7 +122,7 @@ namespace SmartTiles
             }
         }
 
-        public Mesh GetNewTile(float tileSize)
+        private Mesh GetNewTile(float tileSize)
         {
             Mesh mesh = new();
 
