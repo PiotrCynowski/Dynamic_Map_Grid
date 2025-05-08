@@ -27,3 +27,15 @@ MonoBehaviour:
     - {fileID: 5876282692966788824, guid: 357c6a5069ed8f141b883a35bf0f7b56, type: 3}
     - {fileID: 5469541328822006628, guid: ed6bf9cb4c08c454faefce1b82114a47, type: 3}
     - {fileID: 1379675368666560279, guid: 2a94fe6c7a4b6044b9f03d9ee164651f, type: 3}
+    elementsSpacing: 3
+    maxElementsDensity: 15
+    layerMaskForPlayer:
+      serializedVersion: 2
+      m_Bits: 256
+    layerMaskForTiles:
+      serializedVersion: 2
+      m_Bits: 64
+    tileSize: 10
+    tilesNumberDistanceFromPlayer: 3
+    tilesNumberMaxDistanceFromCenter: 5
+    tileMat: {fileID: 2100000, guid: b47dd04a8f66888479d5df01a5e7d2d8, type: 2}

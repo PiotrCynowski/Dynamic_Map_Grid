@@ -32,6 +32,7 @@ namespace SmartTiles
                 return instance;
             }
         }
+
         private void Awake()
         {
             if (instance != null && instance != this)
@@ -54,7 +55,6 @@ namespace SmartTiles
             tileDatas = tiles;
         }
 
-        ///Callback for when the player stands on a new tile
         private void PlayerStandsOnTile(Vector2Int gPos)
         {
             if (playerTileGPos == gPos)

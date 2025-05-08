@@ -25,6 +25,7 @@ namespace SmartTiles
             else
             {
                 Instance = this;
+                DontDestroyOnLoad(this.gameObject);
             }
 
             LoopXYRoad.OnPlayerWPosUpdate += UpdatePlayerWPos;
