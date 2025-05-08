@@ -7,6 +7,6 @@ public class SmartTiles_Tester : MonoBehaviour
 
     public void Start()
     {
-        LoopXYRoad.Instance.PrepareTiles();
+        LoopXYRoad.Instance.GenerateTiles(tilesConfig.GetConfig());
     }
 }

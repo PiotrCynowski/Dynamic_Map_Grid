@@ -16,7 +16,7 @@ namespace SmartTiles
 
         public static LoopXYRoad Instance { get; private set; }
 
-        public void Awake()
+        private void Awake()
         {
             if (Instance != null && Instance != this)
                 Destroy(this);
@@ -24,7 +24,7 @@ namespace SmartTiles
                 Instance = this;
         }
 
-        private void GenerateTiles(TilesConfig config)
+        public void GenerateTiles(TilesConfig config)
         {
             TileGenerator tileGenerator = new TileGenerator(config, PlayerStandsOnTile);
             tileGenerator.PrepareTiles();
@@ -100,7 +100,7 @@ namespace SmartTiles
                     Material thisMat = new(config.tileMat);
                     Vector2Int? localCoords = useSavedPositions ? new Vector2Int(lRow, lCol) : null;
 
-                    tile.AddComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, config.tilesNumberDistanceFromPlayer, tileMesh, PlayerStandsOnTile, thisMat, localCoords, config.tilesNumberMaxDistanceFromCenter, config.layerMaskForPlayer);
+                    tile.AddComponent<TileObject>().Init(new Vector2Int(row, col), tileSettings, config.tilesNumberDistanceFromPlayer, tileMesh, onPlayerStandsOnTile, thisMat, localCoords, config.tilesNumberMaxDistanceFromCenter, config.layerMaskForPlayer);
 
                     tileDatas.Add(tile.GetComponent<TileObject>());
                 }
