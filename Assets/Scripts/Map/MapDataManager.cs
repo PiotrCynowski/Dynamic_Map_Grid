@@ -1,7 +1,6 @@
-using PoolSpawner;
 using UnityEngine;
 
-namespace GameMap.Generator
+namespace SmartTiles
 {
     public class MapDataManager : MonoBehaviour
     {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Pool;
 
-namespace PoolSpawner
+namespace SmartTiles
 {
     public class SpawnWithPool
     {

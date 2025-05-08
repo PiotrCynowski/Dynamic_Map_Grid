@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GameMap.Generator
+namespace SmartTiles
 {
     public class TileElements
     {

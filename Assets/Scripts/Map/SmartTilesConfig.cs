@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace TexturesNoiseMixer
+namespace SmartTiles
 {
     [CreateAssetMenu(fileName = "SmartTilesConfig", menuName = "ScriptableObjects/SmartTiles Config", order = 1)]
     public class SmartTilesConfig : ScriptableObject

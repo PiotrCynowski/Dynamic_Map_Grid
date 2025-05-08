@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace GameMap.Generator
+namespace SmartTiles
 {
     public class TileObject : MonoBehaviour
     {

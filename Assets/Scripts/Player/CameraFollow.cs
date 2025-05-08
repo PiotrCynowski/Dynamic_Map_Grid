@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Player
+namespace SmartTiles
 {
     public class CameraFollow : MonoBehaviour
     {
