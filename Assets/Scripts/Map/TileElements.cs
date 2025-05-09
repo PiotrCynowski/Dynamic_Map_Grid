@@ -49,7 +49,7 @@ namespace SmartTiles
                 foreach (GameObject obj in elements[key])
                 {
                     if (obj.activeSelf)
-                        MapDataManager.Instance.poolMapElements.ThisObjReleased(obj, key);
+                        LoopXYRoad.Instance.poolMapElements.ThisObjReleased(obj, key);
                 }
             }
             elements.Clear();
@@ -82,7 +82,7 @@ namespace SmartTiles
                 {
                     if (Random.Range(0, 100) < density)
                     {
-                        (int ID, GameObject newElement) = MapDataManager.Instance.poolMapElements.GetRandomSpawnObject();
+                        (int ID, GameObject newElement) = LoopXYRoad.Instance.poolMapElements.GetRandomSpawnObject();
                         newElement.transform.SetParent(container);
                         newElement.transform.position = new Vector3(x, 0f, z); ///position 
                         tileElements.Add(new Vector3(x, z, ID));
@@ -105,7 +105,7 @@ namespace SmartTiles
             for (int i = 0; i < tileData.Length; i++)
             {
                 objID = (int)tileData[i].z;
-                newElement = MapDataManager.Instance.poolMapElements.GetSpawnObject(objID);
+                newElement = LoopXYRoad.Instance.poolMapElements.GetSpawnObject(objID);
                 newElement.transform.SetParent(container);
                 newElement.transform.position = new Vector3(tileData[i].x, 0f, tileData[i].y); ///position 
                 AddElement(objID, newElement);

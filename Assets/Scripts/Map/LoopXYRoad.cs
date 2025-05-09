@@ -13,6 +13,8 @@ namespace SmartTiles
         public delegate void playerWPosUpdated(Vector2Int wPos);
         public static event playerWPosUpdated OnPlayerWPosUpdate;
 
+        public SpawnWithPool poolMapElements { get; private set; }
+
         public static LoopXYRoad instance { get; private set; }
         public static LoopXYRoad Instance
         {
@@ -46,6 +48,8 @@ namespace SmartTiles
 
         public void GenerateTiles(TilesConfig config)
         {
+            AddObjectPools(config.tileElements);
+
             tilesNumberDistanceFromPlayer = config.tilesNumberDistanceFromPlayer;
             playerTileGPos = new Vector2Int(config.tilesNumberDistanceFromPlayer, config.tilesNumberDistanceFromPlayer);
 
@@ -70,6 +74,15 @@ namespace SmartTiles
             {
                 bool isInPlayerRange = Mathf.Abs(tileDatas[i].localPos.x - gPos.x) <= tilesNumberDistanceFromPlayer && Mathf.Abs(tileDatas[i].localPos.y - gPos.y) <= tilesNumberDistanceFromPlayer;
                 tileDatas[i].MoveTiles(movedBy, playerTileWorldPos, isInPlayerRange);
+            }
+        }
+
+        private void AddObjectPools(GameObject[] tileElements)
+        {
+            poolMapElements = new();
+            for (int i = 0; i < tileElements.Length; i++)
+            {
+                poolMapElements.AddPoolForGameObject(tileElements[i], i);
             }
         }
     }

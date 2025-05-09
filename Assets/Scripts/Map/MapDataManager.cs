@@ -12,8 +12,7 @@ namespace SmartTiles
 
         [Header("Pool Elements")]
         [SerializeField] GameObject[] mapElements;
-        public SpawnWithPool poolMapElements { get; private set; }
-      
+
         public SaveLoad saveLoad;
 
         private void Awake()
@@ -32,17 +31,7 @@ namespace SmartTiles
 
             saveLoad = new SaveLoad();
 
-            AddObjectPool();
             groundTexLen = groundTextures.Length;
-        }
-
-        private void AddObjectPool()
-        {
-            poolMapElements = new();
-            for (int i = 0; i < mapElements.Length; i++)
-            {
-                poolMapElements.AddPoolForGameObject(mapElements[i], i);
-            }
         }
 
         private void UpdatePlayerWPos(Vector2Int wPos)
