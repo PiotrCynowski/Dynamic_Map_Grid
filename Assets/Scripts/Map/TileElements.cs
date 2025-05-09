@@ -31,7 +31,7 @@ namespace SmartTiles
 
             if (isEndMap)
             {
-                groundMat.SetTexture("_MainTex", MapDataManager.Instance.GetGroundBlock());
+                groundMat.SetTexture("_MainTex", LoopXYRoad.Instance.GetGroundBlock());
                 return;
             }
 
@@ -56,7 +56,7 @@ namespace SmartTiles
 
             if (isEndMap)
             {
-                groundMat.SetTexture("_MainTex", MapDataManager.Instance.GetGroundBlock());
+                groundMat.SetTexture("_MainTex", LoopXYRoad.Instance.GetGroundBlock());
                 return;
             }
 
@@ -91,7 +91,7 @@ namespace SmartTiles
                 }
             }
 
-            (int gID, Texture2D ground) = MapDataManager.Instance.GetRndGround();
+            (int gID, Texture2D ground) = LoopXYRoad.Instance.GetRndGround();
             groundMat.SetTexture("_MainTex", ground);
             MapDataManager.Instance.saveLoad.AddTileData(worldPos, tileElements.ToArray(), gID);
         }
@@ -111,7 +111,7 @@ namespace SmartTiles
                 AddElement(objID, newElement);
             }
 
-            groundMat.SetTexture("_MainTex", MapDataManager.Instance.GetGroundByID(groundID));
+            groundMat.SetTexture("_MainTex", LoopXYRoad.Instance.GetGroundByID(groundID));
         }
 
         private void AddElement(int ID, GameObject obj)

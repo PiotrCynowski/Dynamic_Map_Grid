@@ -15,6 +15,9 @@ namespace SmartTiles
 
         public SpawnWithPool poolMapElements { get; private set; }
 
+        private TilesConfig config;
+        private int groundTexLen;
+
         public static LoopXYRoad instance { get; private set; }
         public static LoopXYRoad Instance
         {
@@ -49,6 +52,8 @@ namespace SmartTiles
         public void GenerateTiles(TilesConfig config)
         {
             AddObjectPools(config.tileElements);
+            this.config = config;
+            groundTexLen = config.groundTextures.Length;
 
             tilesNumberDistanceFromPlayer = config.tilesNumberDistanceFromPlayer;
             playerTileGPos = new Vector2Int(config.tilesNumberDistanceFromPlayer, config.tilesNumberDistanceFromPlayer);
@@ -85,6 +90,24 @@ namespace SmartTiles
                 poolMapElements.AddPoolForGameObject(tileElements[i], i);
             }
         }
+
+        #region Get Map Elements
+        public (int, Texture2D) GetRndGround()
+        {
+            int groundID = UnityEngine.Random.Range(0, groundTexLen);
+            return (groundID, config.groundTextures[groundID]);
+        }
+
+        public Texture2D GetGroundByID(int ID)
+        {
+            return config.groundTextures[ID];
+        }
+
+        public Texture2D GetGroundBlock()
+        {
+            return config.blockTexture;
+        }
+        #endregion
     }
 
     public class TileGenerator

@@ -5,13 +5,6 @@ namespace SmartTiles
     public class MapDataManager : MonoBehaviour
     {
         public static MapDataManager Instance;
-        [Header("Tile Ground")]
-        [SerializeField] private Texture2D[] groundTextures;
-        [SerializeField] private Texture2D blockTexture;
-        private int groundTexLen;
-
-        [Header("Pool Elements")]
-        [SerializeField] GameObject[] mapElements;
 
         public SaveLoad saveLoad;
 
@@ -30,8 +23,6 @@ namespace SmartTiles
             LoopXYRoad.OnPlayerWPosUpdate += UpdatePlayerWPos;
 
             saveLoad = new SaveLoad();
-
-            groundTexLen = groundTextures.Length;
         }
 
         private void UpdatePlayerWPos(Vector2Int wPos)
@@ -44,22 +35,6 @@ namespace SmartTiles
             saveLoad.SaveTilesData();
         }
 
-        #region Get Map Elements
-        public (int, Texture2D) GetRndGround()
-        {
-            int groundID = Random.Range(0, groundTexLen);
-            return (groundID, groundTextures[groundID]);
-        }
-
-        public Texture2D GetGroundByID(int ID)
-        {
-            return groundTextures[ID];
-        }
-
-        public Texture2D GetGroundBlock()
-        {
-            return blockTexture;
-        }
-        #endregion
+     
     }
 }
