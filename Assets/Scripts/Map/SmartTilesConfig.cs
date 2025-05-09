@@ -19,6 +19,7 @@ namespace SmartTiles
         [Header("Tile Ground")]
         public Texture2D[] groundTextures;
         public Texture2D blockTexture;
+        public TextureAssign textureAssign;
         [Header("Tile Elements")]
         public GameObject[] tileElements;
         public int elementsSpacing = 3;
@@ -39,4 +40,6 @@ namespace SmartTiles
             this.tileElements = tileElements;
         }
     }
+
+    public enum TextureAssign { random, byID, reveredByID };
 }
